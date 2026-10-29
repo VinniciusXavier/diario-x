@@ -1,0 +1,22 @@
+{
+  "edicoes": [
+    {
+      "data": "2026-10-29",
+      "numero": 3,
+      "manchete_titulo": "Gemini 4 Carbon estreia em 1º no ranking geral, mas só para defensores de segurança",
+      "total": 55
+    },
+    {
+      "data": "2026-10-28",
+      "numero": 2,
+      "manchete_titulo": "Genie 4 gera mundos 3D jogáveis com som, física melhor e cena editada por texto",
+      "total": 55
+    },
+    {
+      "data": "2026-10-27",
+      "numero": 1,
+      "manchete_titulo": "GPT-6.1 Terra: o novo modelo da OpenAI enxerga a tela e opera o computador",
+      "total": 54
+    }
+  ]
+}

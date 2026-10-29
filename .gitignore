@@ -1,0 +1,11 @@
+# gerado a cada dia (coletar.mjs / rodar-edicao.mjs)
+coleta/
+logs/
+edicoes/rascunho-*.json
+edicoes/teste-*.json
+
+# atalho do Windows aponta para caminho desta máquina
+*.lnk
+
+.impeccable/live/
+node_modules/
