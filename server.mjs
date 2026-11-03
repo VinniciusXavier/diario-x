@@ -92,6 +92,7 @@ function configPublica() {
     ia: { provedor: cfg.ia.provedor, modelo: cfg.ia.modelo || '', api_url: cfg.ia.api?.url || '', chave_env: cfg.ia.api?.chave_env || '' },
     provedores: PROVEDORES,
     feeds: cfg.fontes.rss.length,
+    buscas: cfg.fontes.google_noticias.length,
   };
 }
 
@@ -161,7 +162,7 @@ const server = http.createServer((req, res) => {
     if (req.method === 'POST' && pathname === '/api/fontes') {
       return lerCorpo(req, res, (d) => {
         if (busca.rodando) return sendJson(res, 409, { error: 'Já tem uma busca rodando' });
-        if (d.acao === 'aplicar') rodarFontes(['aplicar']);
+        if (d.acao === 'aplicar') rodarFontes(['aplicar', ...(d.substituir ? ['--substituir'] : [])]);
         else rodarFontes(['descobrir', String(d.tema || '').slice(0, 300)].filter(Boolean));
         sendJson(res, 202, { ok: true });
       });

@@ -2,14 +2,14 @@
 // Uso:
 //   node fontes.mjs adicionar <site ou feed> [--tipo design] [--nome "Nome"]   acha o feed do site e põe no config.json
 //   node fontes.mjs descobrir "tema"                                         a IA sugere; o script confere cada feed
-//   node fontes.mjs aplicar                                                  põe no config.json o que a busca aprovou
+//   node fontes.mjs aplicar [--substituir]                                   põe no config.json o que a busca aprovou
 //   node fontes.mjs testar                                                   mostra quais feeds do config estão quebrados
 import fs from 'node:fs';
 import path from 'node:path';
-import { ROOT, carregarConfig } from './config.mjs';
+import { ROOT, carregarConfig, googleNoticias } from './config.mjs';
 
 const USER_AGENT = 'DiarioX/1.0 (+personal reader)';
-const TIPOS = ['oficial', 'imprensa', 'voz', 'gringo', 'comunidade', 'lancamento', 'design'];
+const TIPOS = ['oficial', 'imprensa', 'voz', 'gringo', 'comunidade', 'lancamento', 'design', 'video'];
 const CAMINHOS_COMUNS = ['/feed', '/rss', '/feed.xml', '/rss.xml', '/atom.xml', '/index.xml', '/feed/rss/', '/rss/', '/blog/feed', '/blog/rss.xml', '/feeds/posts/default'];
 const SUGERIDAS = 'coleta/fontes-sugeridas.json';
 const VERIFICADAS = 'coleta/fontes-verificadas.json';
@@ -69,11 +69,19 @@ function salvarConfigPessoal(cfg) {
 
 const chaveUrl = (u) => u.toLowerCase().replace(/^https?:\/\/(www\.)?/, '').replace(/\/+$/, '');
 
-// junta as fontes novas no config.json sem repetir; devolve quantas entraram de cada tipo
-function mesclar(novas) {
+// junta as fontes novas no config.json sem repetir (ou troca as atuais por elas); devolve quantas entraram de cada tipo
+function mesclar(novas, substituir = false) {
   const cfg = lerConfigPessoal();
-  cfg.fontes = { rss: [], github_buscas: [], github_releases: [], hacker_news: [], ...cfg.fontes };
-  const conta = { rss: 0, github_buscas: 0, github_releases: 0, hacker_news: 0 };
+  cfg.fontes = { rss: [], google_noticias: [], github_buscas: [], github_releases: [], hacker_news: [], ...cfg.fontes };
+  if (substituir) {
+    for (const campo of ['rss', 'google_noticias', 'github_buscas', 'github_releases', 'hacker_news']) cfg.fontes[campo] = [];
+  }
+  // trending do GitHub e Hugging Face seguem o que a busca concluiu sobre a pessoa
+  if (typeof novas.tecnologia === 'boolean' && (substituir || novas.tecnologia)) {
+    cfg.fontes.github_trending = novas.tecnologia;
+    cfg.fontes.hugging_face = novas.tecnologia;
+  }
+  const conta = { rss: 0, google_noticias: 0, github_buscas: 0, github_releases: 0, hacker_news: 0 };
   const urls = new Set(cfg.fontes.rss.map((f) => chaveUrl(f.url)));
   for (const f of novas.rss || []) {
     if (urls.has(chaveUrl(f.url))) continue;
@@ -81,7 +89,7 @@ function mesclar(novas) {
     cfg.fontes.rss.push(f);
     conta.rss++;
   }
-  for (const campo of ['github_buscas', 'github_releases', 'hacker_news']) {
+  for (const campo of ['google_noticias', 'github_buscas', 'github_releases', 'hacker_news']) {
     const atuais = new Set(cfg.fontes[campo].map((v) => v.toLowerCase()));
     for (const v of novas[campo] || []) {
       if (atuais.has(v.toLowerCase())) continue;
@@ -116,17 +124,29 @@ async function descobrir() {
   const jaTem = cfg.fontes.rss.map((f) => f.url).join('\n');
   const pedido = [
     'Você monta a lista de fontes de um jornal diário personalizado (o Diário X).',
-    `Tema e leitor: ${tema}`,
-    'Liste as maiores referências e portais dessa área, as que um especialista acompanharia:',
-    '- 15 a 25 feeds RSS/Atom: portais, blogs oficiais de empresas e ferramentas, especialistas, newsletters e comunidades. Misture português e outros idiomas.',
-    '- 3 a 8 buscas de repositórios do GitHub, na sintaxe da busca (ex.: "topic:seo", "figma plugin in:name,description").',
-    '- 0 a 6 repositórios "dono/nome" cujas versões novas valem notícia (ferramentas que o leitor usa). Só se existirem.',
-    '- 3 a 6 palavras para buscar no Hacker News (em inglês).',
-    `"tipo" de cada feed, um destes: ${TIPOS.join(', ')}. "idioma": "pt", "en", "ja"... `,
+    `Quem vai ler e o que quer saber: ${tema}`,
+    'Primeiro entenda a pessoa: profissão, mercado, cidade, idioma e o que ela faria com a notícia. Depois pense em onde',
+    'alguém assim se informa de verdade e monte uma mistura variada, do jeito que fizer sentido para ela. Exemplos de lugar:',
+    'portais de notícia gerais e do setor, sites de associações e órgãos do mercado, revistas especializadas, blogs de',
+    'empresas e ferramentas que ela usa, especialistas, newsletters (Substack, Medium), canais do YouTube, subreddits,',
+    'podcasts, imprensa local da cidade dela. Nada de seguir um molde: um dono de restaurante, uma advogada e um',
+    'programador têm fontes completamente diferentes.',
+    '',
+    'Devolva:',
+    '- "rss": 15 a 25 fontes com feed RSS/Atom. YouTube: https://www.youtube.com/feeds/videos.xml?channel_id=ID.',
+    '  Reddit: https://www.reddit.com/r/NOME/.rss. Substack: https://NOME.substack.com/feed.',
+    '- "google_noticias": 3 a 8 buscas no Google Notícias (palavras ou frases, no idioma da pessoa). Pega qualquer',
+    '  portal de notícia sobre o assunto, então use para os temas centrais dela.',
+    '- "tecnologia": true só se a pessoa trabalha com software/tecnologia e quer GitHub e Hacker News; senão false.',
+    '- Só se "tecnologia" for true: "github_buscas" (sintaxe da busca do GitHub), "github_releases" ("dono/nome" de',
+    '  ferramentas que ela usa) e "hacker_news" (palavras em inglês). Senão, listas vazias.',
+    'LinkedIn, Instagram, Facebook, X e TikTok não têm feed aberto: não ponha esses links. Se uma pessoa ou empresa',
+    'importante só publica lá, procure o blog, a newsletter ou o canal do YouTube dela.',
+    `"tipo" de cada feed, um destes: ${TIPOS.join(', ')}. "idioma": "pt", "en", "es"...`,
     'Só sites que existem de verdade. Se não tiver certeza do endereço exato do feed, ponha o endereço do site em "url": o script procura o feed na página e descarta o que não funcionar.',
     jaTem ? `Já estão no jornal (não repita):\n${jaTem}` : '',
     'Formato, só este JSON:',
-    '{"rss":[{"nome":"","url":"","tipo":"","idioma":""}],"github_buscas":[],"github_releases":[],"hacker_news":[]}',
+    '{"rss":[{"nome":"","url":"","tipo":"","idioma":""}],"google_noticias":[],"tecnologia":false,"github_buscas":[],"github_releases":[],"hacker_news":[]}',
     VIA_API ? 'Responda só com o JSON, sem texto antes ou depois.'
       : `Abra os sites para confirmar os endereços. Escreva o resultado em ${SUGERIDAS} e não altere nenhum outro arquivo.`,
   ].filter(Boolean).join('\n');
@@ -139,8 +159,14 @@ async function descobrir() {
   if (!fs.existsSync(alvo)) throw new Error(`A IA não devolveu a lista (código ${r.code}): ${r.out.slice(-400)}`);
   const sugeridas = JSON.parse(fs.readFileSync(alvo, 'utf-8'));
 
-  // confere tudo: feed que não abre e repositório que não existe ficam de fora
-  const aprovadas = { rss: [], github_buscas: sugeridas.github_buscas || [], github_releases: [], hacker_news: sugeridas.hacker_news || [] };
+  // confere tudo: feed que não abre, busca sem notícia e repositório que não existe ficam de fora
+  const tec = sugeridas.tecnologia === true;
+  const aprovadas = { rss: [], google_noticias: [], tecnologia: tec, github_buscas: tec ? sugeridas.github_buscas || [] : [], github_releases: [], hacker_news: tec ? sugeridas.hacker_news || [] : [] };
+  for (const termo of sugeridas.google_noticias || []) {
+    const r = await baixar(googleNoticias(termo)).then(({ texto }) => contarItens(texto), () => 0);
+    console.log(`  ${r ? '✓' : '✗'} Google Notícias: "${termo}"${r ? ` (${r} notícias na semana)` : ': nada encontrado'}`);
+    if (r) aprovadas.google_noticias.push(termo);
+  }
   const feeds = await Promise.all((sugeridas.rss || []).map(async (f) => ({ f, feed: await acharFeed(f.url) })));
   for (const { f, feed } of feeds) {
     if (feed.erro) { console.log(`  ✗ ${f.nome} — ${f.url}: ${feed.erro}`); continue; }
@@ -148,24 +174,27 @@ async function descobrir() {
     aprovadas.rss.push(fonte);
     console.log(`  ✓ ${f.nome} — ${feed.url} (${feed.itens} itens)`);
   }
-  for (const repo of sugeridas.github_releases || []) {
+  for (const repo of tec ? sugeridas.github_releases || [] : []) {
     const ok = await baixar(`https://api.github.com/repos/${repo}`).then(() => true, () => false);
     console.log(`  ${ok ? '✓' : '✗'} releases de ${repo}${ok ? '' : ': repositório não encontrado'}`);
     if (ok) aprovadas.github_releases.push(repo);
   }
   if (aprovadas.github_buscas.length) console.log(`  buscas no GitHub: ${aprovadas.github_buscas.join(' · ')}`);
   if (aprovadas.hacker_news.length) console.log(`  Hacker News: ${aprovadas.hacker_news.join(' · ')}`);
+  if (!tec) console.log('  GitHub e Hacker News: fora (não é o mundo desta pessoa)');
 
   fs.writeFileSync(path.join(ROOT, VERIFICADAS), JSON.stringify(aprovadas, null, 2) + '\n', 'utf-8');
-  console.log(`\n${aprovadas.rss.length} de ${(sugeridas.rss || []).length} feeds funcionam. Para pôr no config.json: node fontes.mjs aplicar`);
+  console.log(`\n${aprovadas.rss.length} de ${(sugeridas.rss || []).length} feeds funcionam, mais ${aprovadas.google_noticias.length} buscas no Google Notícias.`);
+  console.log('Para usar: node fontes.mjs aplicar (soma às atuais) ou node fontes.mjs aplicar --substituir (troca as atuais)');
 }
 
 function aplicar() {
   const arq = path.join(ROOT, VERIFICADAS);
   if (!fs.existsSync(arq)) throw new Error('Nada para aplicar: rode antes node fontes.mjs descobrir "tema"');
-  const c = mesclar(JSON.parse(fs.readFileSync(arq, 'utf-8')));
+  const c = mesclar(JSON.parse(fs.readFileSync(arq, 'utf-8')), args.includes('--substituir'));
   fs.rmSync(arq);
-  console.log(`Entraram no config.json: ${c.rss} feeds, ${c.github_buscas} buscas do GitHub, ${c.github_releases} repositórios de releases, ${c.hacker_news} palavras do HN.`);
+  console.log(`${args.includes('--substituir') ? 'Fontes trocadas' : 'Entraram no config.json'}: ${c.rss} feeds, ${c.google_noticias} buscas no Google Notícias, ` +
+    `${c.github_buscas} buscas do GitHub, ${c.github_releases} repositórios de releases, ${c.hacker_news} palavras do HN.`);
 }
 
 async function testar() {

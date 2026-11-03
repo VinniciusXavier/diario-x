@@ -162,31 +162,35 @@ As seções continuam as mesmas; o que muda é quantas matérias entram em cada 
 
 ### 5. De onde vêm as notícias (`fontes`)
 
+As fontes dependem da pessoa: um dono de restaurante, uma advogada e um programador leem lugares bem diferentes.
+
 | Campo | O que é |
 |---|---|
-| `rss` | feeds: `{ "nome", "url", "tipo", "idioma"?, "dias"? }`. `tipo`: `oficial`, `imprensa`, `voz`, `gringo`, `comunidade`, `lancamento`, `design` |
-| `github_buscas` | buscas de repositórios novos, ex.: `"topic:mcp"`, `"topic:threejs"` |
-| `github_releases` | repositórios cujas versões novas você quer saber, ex.: `"anthropics/claude-code"` |
-| `hacker_news` | palavras para buscar no Hacker News |
+| `rss` | qualquer feed: portais, sites do setor, blogs, newsletters (Substack, Medium), canais do YouTube, subreddits, podcasts. `{ "nome", "url", "tipo", "idioma"?, "dias"? }` |
+| `google_noticias` | buscas no Google Notícias, ex.: `"delivery de comida"`. Pega qualquer portal que falou do assunto na semana |
+| `github_buscas` / `github_releases` / `hacker_news` | para quem é de tecnologia: repositórios novos, versões de ferramentas e Hacker News |
 | `github_trending` / `hugging_face` | `true` ou `false` |
 
-Quer um jornal de outro assunto (marketing, games, front-end)? Troque os feeds e as buscas. As seções do jornal
-continuam as mesmas; o que entra em cada uma muda junto com as fontes e o perfil.
+LinkedIn, Instagram, Facebook, X e TikTok não oferecem feed aberto, então não entram direto. Quando alguém importante só
+publica lá, vale o blog, a newsletter ou o canal do YouTube da mesma pessoa ou empresa.
+
+As seções do jornal continuam as mesmas; o que entra em cada uma muda junto com as fontes e o perfil.
 
 #### Sem editar JSON na mão
 
 ```bash
 node fontes.mjs adicionar meioemensagem.com.br --tipo imprensa   # você sugere um site: o script acha o feed
-node fontes.mjs descobrir "marketing digital no Brasil"          # a IA procura as maiores referências da área
-node fontes.mjs aplicar                                          # põe no config o que a busca aprovou
+node fontes.mjs descobrir "tenho uma pizzaria delivery em BH"     # a IA procura onde alguém assim se informa
+node fontes.mjs aplicar --substituir                             # troca as fontes pelas aprovadas (sem a opção: soma)
 node fontes.mjs testar                                           # mostra os feeds quebrados
 ```
 
 - **Você sugere:** passe o endereço do site. O script tenta o próprio link, o feed anunciado na página e os
   caminhos de sempre (`/feed`, `/rss.xml`…). Só entra se abrir e tiver matérias.
-- **A IA procura:** a IA do config lista portais, blogs oficiais, especialistas, newsletters e comunidades do tema,
-  mais buscas do GitHub e palavras para o Hacker News. O script abre cada feed e descarta o que não funciona ou não
-  existe, então endereço inventado não passa. Sem tema, usa o `leitor` do config.
+- **A IA procura:** primeiro entende a pessoa (profissão, mercado, cidade, idioma), depois monta uma mistura do que
+  faz sentido para ela: portais, sites do setor, especialistas, YouTube, newsletters, imprensa local e buscas no
+  Google Notícias. GitHub e Hacker News só entram para quem é de tecnologia. O script abre cada fonte e descarta o
+  que não funciona, então endereço inventado não passa. Sem tema, usa o `leitor` do config.
 - A lista aprovada fica em `coleta/fontes-verificadas.json` até você rodar `aplicar`: dá para olhar antes.
 
 ## Recursos do leitor

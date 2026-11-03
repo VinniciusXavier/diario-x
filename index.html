@@ -398,8 +398,11 @@
         <button type="button" class="src" id="aj-buscar">Procurar com a IA</button>
       </div>
       <pre class="busca-log" id="aj-log" hidden></pre>
-      <button type="button" class="save principal" id="aj-aplicar" hidden style="margin-top:.6rem">Usar as fontes aprovadas</button>
-      <p class="dica">A IA lista portais e especialistas do tema; cada feed é aberto e conferido antes de entrar.</p>
+      <div id="aj-aplicar-box" hidden style="margin-top:.6rem">
+        <label class="dica" style="display:flex;gap:.5rem;align-items:center;margin:0 0 .6rem"><input type="checkbox" id="aj-substituir" checked> Trocar as fontes atuais pelas encontradas (desmarcado: soma)</label>
+        <button type="button" class="save principal" id="aj-aplicar">Usar as fontes aprovadas</button>
+      </div>
+      <p class="dica">A IA pensa em onde alguém como você se informa (portais, sites do setor, especialistas, YouTube, newsletters, Google Notícias) e cada fonte é aberta e conferida antes de entrar.</p>
     </fieldset>
 
     <fieldset>
@@ -804,12 +807,13 @@ const IA_DICA = {
   comando: 'Outro CLI: defina "comando" e "args" direto no config.json.',
 };
 const IA_NOME = { antigravity: 'Antigravity', claude: 'Claude Code', gemini: 'Gemini CLI', codex: 'Codex', api: 'API (OpenAI, OpenRouter, Ollama…)', comando: 'Outro comando' };
+const resumoFontes = (c) => `${c.feeds} feeds${c.buscas ? ` e ${c.buscas} buscas no Google Notícias` : ''} no jornal agora.`;
 function preencherAjustes() {
   const c = state.cfg;
   $('#aj-leitor').value = c.leitor;
   $('#aj-tamanhos').innerHTML = Object.entries(c.tamanhos).map(([id, t]) =>
     `<label><input type="radio" name="tamanho" value="${id}" ${id === c.tamanho ? 'checked' : ''}>${id}<small>${t.total} matérias</small></label>`).join('');
-  $('#aj-feeds').textContent = `${c.feeds} feeds no jornal agora.`;
+  $('#aj-feeds').textContent = resumoFontes(c);
   $('#aj-provedor').innerHTML = c.provedores.map((p) => `<option value="${p}" ${p === c.ia.provedor ? 'selected' : ''}>${IA_NOME[p] || p}</option>`).join('');
   $('#aj-modelo').value = c.ia.modelo;
   $('#aj-cidade').value = c.cidade;
@@ -857,16 +861,16 @@ async function acompanharBusca() {
     log.scrollTop = log.scrollHeight;
     if (!b.rodando) {
       $('#aj-buscar').disabled = false;
-      $('#aj-aplicar').hidden = !b.aprovadas;
+      $('#aj-aplicar-box').hidden = !b.aprovadas;
       state.cfg = await getJSON('api/config');
-      $('#aj-feeds').textContent = `${state.cfg.feeds} feeds no jornal agora.`;
+      $('#aj-feeds').textContent = resumoFontes(state.cfg);
       return;
     }
     await new Promise((ok) => setTimeout(ok, 2000));
   }
 }
 async function pedirFontes(corpo) {
-  $('#aj-buscar').disabled = true; $('#aj-aplicar').hidden = true;
+  $('#aj-buscar').disabled = true; $('#aj-aplicar-box').hidden = true;
   try {
     const r = await fetch('api/fontes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
     if (!r.ok && r.status !== 409) throw new Error(r.status);
@@ -874,7 +878,7 @@ async function pedirFontes(corpo) {
   } catch { $('#aj-buscar').disabled = false; toast('Não consegui falar com o servidor'); }
 }
 $('#aj-buscar').onclick = () => pedirFontes({ tema: $('#aj-tema').value.trim() || $('#aj-leitor').value.trim() });
-$('#aj-aplicar').onclick = () => pedirFontes({ acao: 'aplicar' });
+$('#aj-aplicar').onclick = () => pedirFontes({ acao: 'aplicar', substituir: $('#aj-substituir').checked });
 
 boot();
 </script>

@@ -15,9 +15,13 @@ export function carregarConfig() {
   cfg.edicao = { tamanho: 'completa', ...cfg.edicao };
   cfg.neuroos = cfg.neuroos === true; // botão "Salvar no NeuroOS": só para quem tem o NeuroOS
   cfg.cidade = cfg.cidade || '';
-  cfg.fontes = { rss: [], github_buscas: [], github_releases: [], hacker_news: [], github_trending: true, hugging_face: true, ...cfg.fontes };
+  cfg.fontes = { rss: [], google_noticias: [], github_buscas: [], github_releases: [], hacker_news: [], github_trending: true, hugging_face: true, ...cfg.fontes };
   return cfg;
 }
+
+// busca no Google Notícias como feed: pega qualquer portal que falou do assunto na última semana
+export const googleNoticias = (termo) =>
+  `https://news.google.com/rss/search?q=${encodeURIComponent(`${termo} when:7d`)}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
 
 // quantas matérias por seção em cada tamanho de edição ("completa" segue a skill)
 export const TAMANHOS = {

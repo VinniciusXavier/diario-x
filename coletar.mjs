@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { carregarConfig } from './config.mjs';
+import { carregarConfig, googleNoticias } from './config.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const USER_AGENT = 'DiarioX/1.0 (+personal reader)';
@@ -16,7 +16,11 @@ if (idxDias !== -1 && process.argv[idxDias + 1]) {
 
 // fontes e assuntos vêm do config.json (ou config.exemplo.json): cada pessoa escolhe o que quer acompanhar
 const { fontes } = carregarConfig();
-const RSS_SOURCES = fontes.rss;
+// cada busca no Google Notícias vira mais um feed (qualquer portal que falou do assunto)
+const RSS_SOURCES = [
+  ...fontes.rss,
+  ...fontes.google_noticias.map((termo) => ({ nome: `Google Notícias: ${termo}`, url: googleNoticias(termo), tipo: 'imprensa', idioma: 'pt' }))
+];
 const GITHUB_QUERIES = fontes.github_buscas;
 // novas versões das ferramentas do dia a dia (o que mudou, o que foi corrigido)
 const RELEASE_REPOS = fontes.github_releases;
