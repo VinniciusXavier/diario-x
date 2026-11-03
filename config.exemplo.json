@@ -1,0 +1,260 @@
+{
+  "_ajuda": "Copie este arquivo para config.json e edite. Cada campo está explicado no README, seção Configurar.",
+  "ia": {
+    "provedor": "antigravity",
+    "modelo": "gemini-3.8-flash-medium",
+    "api": {
+      "url": "https://api.openai.com/v1",
+      "chave_env": "OPENAI_API_KEY"
+    }
+  },
+  "leitor": "Exemplo: designer de produto em São Paulo, usa Figma e Claude Code, quer novidades de IA aplicada a design e front-end. Não lê inglês: tudo em português. Prefere ações pequenas que dá para testar em 20 minutos.",
+  "fontes": {
+    "rss": [
+      {
+        "nome": "OpenAI",
+        "url": "https://openai.com/news/rss.xml",
+        "tipo": "oficial"
+      },
+      {
+        "nome": "Google AI",
+        "url": "https://blog.google/technology/ai/rss/",
+        "tipo": "oficial"
+      },
+      {
+        "nome": "Google DeepMind",
+        "url": "https://deepmind.google/blog/rss.xml",
+        "tipo": "oficial"
+      },
+      {
+        "nome": "Google Developers",
+        "url": "https://developers.googleblog.com/feeds/posts/default",
+        "tipo": "oficial"
+      },
+      {
+        "nome": "Hugging Face",
+        "url": "https://huggingface.co/blog/feed.xml",
+        "tipo": "oficial"
+      },
+      {
+        "nome": "Akita On Rails",
+        "url": "https://akitaonrails.com/index.xml",
+        "tipo": "voz",
+        "idioma": "pt",
+        "dias": 7
+      },
+      {
+        "nome": "The Verge IA",
+        "url": "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml",
+        "tipo": "imprensa"
+      },
+      {
+        "nome": "TechCrunch IA",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "tipo": "imprensa"
+      },
+      {
+        "nome": "Simon Willison",
+        "url": "https://simonwillison.net/atom/everything/",
+        "tipo": "gringo"
+      },
+      {
+        "nome": "Latent Space",
+        "url": "https://www.latent.space/feed",
+        "tipo": "gringo"
+      },
+      {
+        "nome": "Smol AI News",
+        "url": "https://news.smol.ai/rss.xml",
+        "tipo": "gringo"
+      },
+      {
+        "nome": "Karpathy",
+        "url": "https://karpathy.bearblog.dev/feed/",
+        "tipo": "gringo"
+      },
+      {
+        "nome": "Ethan Mollick",
+        "url": "https://www.oneusefulthing.org/feed",
+        "tipo": "gringo"
+      },
+      {
+        "nome": "Addy Osmani",
+        "url": "https://addyo.substack.com/feed",
+        "tipo": "gringo"
+      },
+      {
+        "nome": "Ben's Bites",
+        "url": "https://www.bensbites.com/feed",
+        "tipo": "gringo"
+      },
+      {
+        "nome": "dev.to IA",
+        "url": "https://dev.to/feed/tag/ai",
+        "tipo": "gringo"
+      },
+      {
+        "nome": "Zenn IA",
+        "url": "https://zenn.dev/topics/ai/feed",
+        "tipo": "gringo",
+        "idioma": "ja"
+      },
+      {
+        "nome": "Zenn Claude Code",
+        "url": "https://zenn.dev/topics/claudecode/feed",
+        "tipo": "gringo",
+        "idioma": "ja"
+      },
+      {
+        "nome": "Qiita IA",
+        "url": "https://qiita.com/tags/ai/feed",
+        "tipo": "gringo",
+        "idioma": "ja"
+      },
+      {
+        "nome": "Armin Ronacher",
+        "url": "https://lucumr.pocoo.org/feed.atom",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Peter Steinberger",
+        "url": "https://steipete.me/rss.xml",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Mitchell Hashimoto",
+        "url": "https://mitchellh.com/feed.xml",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Hamel Husain",
+        "url": "https://hamel.dev/index.xml",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Eugene Yan",
+        "url": "https://eugeneyan.com/rss/",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Sebastian Raschka",
+        "url": "https://magazine.sebastianraschka.com/feed",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Nathan Lambert (Interconnects)",
+        "url": "https://www.interconnects.ai/feed",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Geoffrey Litt",
+        "url": "https://www.geoffreylitt.com/feed.xml",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Harper Reed",
+        "url": "https://harper.blog/index.xml",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "swyx",
+        "url": "https://www.swyx.io/rss.xml",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Thorsten Ball",
+        "url": "https://registerspill.thorstenball.com/feed",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "Lilian Weng",
+        "url": "https://lilianweng.github.io/index.xml",
+        "tipo": "voz",
+        "dias": 7
+      },
+      {
+        "nome": "TabNews",
+        "url": "https://www.tabnews.com.br/recentes/rss",
+        "tipo": "comunidade",
+        "idioma": "pt"
+      },
+      {
+        "nome": "Lobsters IA",
+        "url": "https://lobste.rs/t/ai.rss",
+        "tipo": "comunidade"
+      },
+      {
+        "nome": "Product Hunt",
+        "url": "https://www.producthunt.com/feed",
+        "tipo": "lancamento"
+      },
+      {
+        "nome": "Codrops",
+        "url": "https://tympanus.net/codrops/feed/",
+        "tipo": "design"
+      },
+      {
+        "nome": "Figma Blog",
+        "url": "https://www.figma.com/blog/feed/atom.xml",
+        "tipo": "design"
+      },
+      {
+        "nome": "Smashing Magazine",
+        "url": "https://www.smashingmagazine.com/feed/",
+        "tipo": "design"
+      },
+      {
+        "nome": "Awwwards",
+        "url": "https://www.awwwards.com/blog/feed/",
+        "tipo": "design"
+      },
+      {
+        "nome": "Dribbble",
+        "url": "https://dribbble.com/shots/popular.rss",
+        "tipo": "design"
+      },
+      {
+        "nome": "Muzli",
+        "url": "https://medium.muz.li/feed",
+        "tipo": "design"
+      }
+    ],
+    "github_buscas": [
+      "topic:mcp",
+      "topic:claude",
+      "topic:ai-agents",
+      "topic:llm",
+      "claude skills in:name,description",
+      "topic:agent-skills",
+      "topic:generative-art",
+      "topic:design",
+      "topic:threejs"
+    ],
+    "github_releases": [
+      "anthropics/claude-code",
+      "google-gemini/gemini-cli",
+      "openai/codex",
+      "ollama/ollama"
+    ],
+    "hacker_news": [
+      "AI",
+      "LLM",
+      "Claude",
+      "Gemini",
+      "agent"
+    ],
+    "github_trending": true,
+    "hugging_face": true
+  }
+}

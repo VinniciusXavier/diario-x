@@ -52,25 +52,28 @@ links e repetição antes de a edição ir ao ar.
 ```mermaid
 flowchart LR
     A[09:00 ou ao ligar o PC] --> B[coletar.mjs<br/>RSS · GitHub · HF · HN]
-    B --> C[Agente escreve<br/>Antigravity · Gemini 3.8 Flash]
+    B --> C[IA escolhida no config<br/>Antigravity · Claude · Gemini · Codex · API]
     C --> D[validar.mjs<br/>formato · links · fotos]
     D -->|falhou| C
     D --> E[edicoes/AAAA-MM-DD.json]
     E --> F[index.html<br/>Hoje · Semana · Mês]
 ```
 
-A coleta não usa IA: só busca e organiza. O agente escolhe, escreve e liga cada item à rotina do leitor.
-Se a validação falhar, o agente tenta de novo (até 3 vezes).
+A coleta não usa IA: só busca e organiza as fontes que você escolheu. A IA escolhe, escreve e liga cada item à rotina do leitor.
+Se a validação falhar, ela recebe os erros e tenta de novo (até 3 vezes).
 
 ## Rodar
 
 Para **ler** o jornal basta o Node 18+, sem dependências: as edições já publicadas vêm no repositório.
-Para **gerar edições novas** você precisa do Antigravity com o CLI `agy`
-instalado e logado (o modelo sai de `DIARIO_MODELO`, padrão `gemini-3.8-flash-medium`).
+Para **gerar edições novas** você precisa de uma IA: a que você já usa serve (veja [Configurar](#configurar)).
 
 ```bash
 git clone https://github.com/VinniciusXavier/diario-x.git
 cd diario-x
+```
+
+```bash
+cp config.exemplo.json config.json   # depois edite: IA, perfil e fontes
 ```
 
 ```bash
@@ -80,7 +83,8 @@ node server.mjs          # abre em http://127.0.0.1:51810 (ou dois cliques no Di
 Montar a edição de hoje na mão:
 
 ```bash
-node rodar-edicao.mjs    # coleta → agente escreve → valida
+node rodar-edicao.mjs              # coleta → IA escreve → valida
+node rodar-edicao.mjs --simular    # só mostra qual IA e comando vai usar
 ```
 
 Agendar todo dia às 09:00 e ao ligar o PC (Windows, PowerShell):
@@ -94,9 +98,60 @@ Agendar todo dia às 09:00 e ao ligar o PC (Windows, PowerShell):
 | Variável | Para que serve |
 |---|---|
 | `DIARIO_PORT` | porta do servidor (padrão `51810`) |
-| `DIARIO_MODELO` | modelo usado pelo `agy` (padrão `gemini-3.8-flash-medium`) |
+| `DIARIO_MODELO` | troca o modelo do config só nesta execução |
 | `NEUROOS_INBOX` | pasta onde o botão "Salvar" grava `diario-x.jsonl` (padrão `~/NeuroOS/brain/inbox`) |
 | `GITHUB_TOKEN` | aumenta o limite da API do GitHub na coleta |
+
+## Configurar
+
+Tudo o que muda de pessoa para pessoa fica no `config.json` (fora do Git; o modelo é o
+[`config.exemplo.json`](config.exemplo.json)). São três partes:
+
+### 1. Qual IA monta a edição (`ia`)
+
+| `provedor` | Precisa de | Abre páginas sozinha? |
+|---|---|---|
+| `antigravity` | CLI `agy` instalado e logado | sim |
+| `claude` | [Claude Code](https://claude.com/claude-code) (`claude`) logado | sim |
+| `gemini` | [Gemini CLI](https://github.com/google-gemini/gemini-cli) (`gemini`) logado | sim |
+| `codex` | [Codex CLI](https://github.com/openai/codex) (`codex`) logado | sim |
+| `api` | qualquer API no formato da OpenAI: OpenAI, OpenRouter, Groq, DeepSeek, Ollama local… | não, usa só a coleta |
+| `comando` | qualquer outro CLI: você diz o comando e os argumentos | depende do CLI |
+
+```jsonc
+// Claude Code
+"ia": { "provedor": "claude", "modelo": "claude-sonnet-5-5" }
+
+// API (a chave fica numa variável de ambiente, nunca no arquivo)
+"ia": { "provedor": "api", "modelo": "gpt-5", "api": { "url": "https://api.openai.com/v1", "chave_env": "OPENAI_API_KEY" } }
+
+// Ollama local, sem chave
+"ia": { "provedor": "api", "modelo": "qwen3:32b", "api": { "url": "http://localhost:11434/v1" } }
+
+// outro CLI: {pedido}, {modelo} e {pasta_skill} são trocados na hora
+"ia": { "provedor": "comando", "comando": "meu-agente", "args": ["--model", "{modelo}", "{pedido}"] }
+```
+
+`modelo` vazio usa o padrão da própria IA. Com `api` a IA não navega: a coleta vai inteira na mensagem, então
+use um modelo com contexto de pelo menos 64 mil tokens.
+
+### 2. Para quem o jornal escreve (`leitor`)
+
+Um parágrafo sobre você: profissão, ferramentas, projetos, o que quer e o que não quer ler. É daí que sai o "pra você"
+de cada matéria. Vazio, vale o **Perfil do leitor** de `docs/SKILL-diario-x.md`.
+
+### 3. De onde vêm as notícias (`fontes`)
+
+| Campo | O que é |
+|---|---|
+| `rss` | feeds: `{ "nome", "url", "tipo", "idioma"?, "dias"? }`. `tipo`: `oficial`, `imprensa`, `voz`, `gringo`, `comunidade`, `lancamento`, `design` |
+| `github_buscas` | buscas de repositórios novos, ex.: `"topic:mcp"`, `"topic:threejs"` |
+| `github_releases` | repositórios cujas versões novas você quer saber, ex.: `"anthropics/claude-code"` |
+| `hacker_news` | palavras para buscar no Hacker News |
+| `github_trending` / `hugging_face` | `true` ou `false` |
+
+Quer um jornal de outro assunto (marketing, games, front-end)? Troque os feeds e as buscas. As seções do jornal
+continuam as mesmas; o que entra em cada uma muda junto com as fontes e o perfil.
 
 ## Recursos do leitor
 
@@ -109,8 +164,10 @@ Agendar todo dia às 09:00 e ao ligar o PC (Windows, PowerShell):
 
 | Arquivo | O que faz |
 |---|---|
-| `coletar.mjs` | RSS, GitHub (busca, trending, releases), Hugging Face, HN; sem IA |
-| `rodar-edicao.mjs` | orquestra a edição com o agente, até 3 tentativas |
+| `config.exemplo.json` | modelo de configuração: IA, perfil do leitor e fontes |
+| `config.mjs` | lê o `config.json` (ou o exemplo) |
+| `coletar.mjs` | RSS, GitHub (busca, trending, releases), Hugging Face, HN, conforme as fontes do config; sem IA |
+| `rodar-edicao.mjs` | chama a IA do config, valida e tenta de novo, até 3 vezes |
 | `validar.mjs` | confere formato, links e repetição; preenche fotos; reescreve `edicoes/index.json` |
 | `server.mjs` | serve o site e recebe o "Salvar" |
 | `index.html` | o jornal inteiro, num arquivo só |
@@ -121,14 +178,13 @@ Agendar todo dia às 09:00 e ao ligar o PC (Windows, PowerShell):
 
 ## Adaptar para você
 
-O jornal é pessoal: o "pra você" de cada matéria sai do **Perfil do leitor** em
-[`docs/SKILL-diario-x.md`](docs/SKILL-diario-x.md). Troque esse perfil pelo seu (profissão, ferramentas,
-projetos) e as próximas edições passam a falar com você.
-
-1. Edite o **Perfil do leitor** em `docs/SKILL-diario-x.md`. O `rodar-edicao.mjs` usa esse arquivo, a não ser que
-   exista uma skill instalada em `~/.claude/skills/diario-x/SKILL.md`, que tem prioridade.
+1. `cp config.exemplo.json config.json` e preencha `ia`, `leitor` e `fontes` (seção [Configurar](#configurar)).
 2. Apague as edições de exemplo em `edicoes/` (deixe `index.json` como `{ "edicoes": [] }`) para começar do nº 1.
-3. Rode `node rodar-edicao.mjs` uma vez e, se quiser, agende com `instalar-agendamento.ps1`.
+3. Confira com `node rodar-edicao.mjs --simular`, rode `node rodar-edicao.mjs` uma vez e, se quiser, agende com
+   `instalar-agendamento.ps1`.
+
+Para mudar as regras do jornal (seções, quantidades, tom), edite `docs/SKILL-diario-x.md`. Uma skill instalada em
+`~/.claude/skills/diario-x/SKILL.md` tem prioridade sobre ela.
 
 Sem NeuroOS, o botão "Salvar" grava num arquivo `.jsonl` comum na pasta de `NEUROOS_INBOX`.
 

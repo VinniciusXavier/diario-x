@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { carregarConfig } from './config.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const USER_AGENT = 'DiarioX/1.0 (+personal reader)';
@@ -13,68 +14,13 @@ if (idxDias !== -1 && process.argv[idxDias + 1]) {
   if (!Number.isNaN(parsed) && parsed > 0) dias = parsed;
 }
 
-const RSS_SOURCES = [
-  { nome: 'OpenAI', url: 'https://openai.com/news/rss.xml', tipo: 'oficial' },
-  { nome: 'Google AI', url: 'https://blog.google/technology/ai/rss/', tipo: 'oficial' },
-  { nome: 'Google DeepMind', url: 'https://deepmind.google/blog/rss.xml', tipo: 'oficial' },
-  { nome: 'Google Developers', url: 'https://developers.googleblog.com/feeds/posts/default', tipo: 'oficial' },
-  { nome: 'Hugging Face', url: 'https://huggingface.co/blog/feed.xml', tipo: 'oficial' },
-  { nome: 'Akita On Rails', url: 'https://akitaonrails.com/index.xml', tipo: 'voz', idioma: 'pt', dias: 7 },
-  { nome: 'The Verge IA', url: 'https://www.theverge.com/rss/ai-artificial-intelligence/index.xml', tipo: 'imprensa' },
-  { nome: 'TechCrunch IA', url: 'https://techcrunch.com/category/artificial-intelligence/feed/', tipo: 'imprensa' },
-  // vozes de fora (entram traduzidas)
-  { nome: 'Simon Willison', url: 'https://simonwillison.net/atom/everything/', tipo: 'gringo' },
-  { nome: 'Latent Space', url: 'https://www.latent.space/feed', tipo: 'gringo' },
-  { nome: 'Smol AI News', url: 'https://news.smol.ai/rss.xml', tipo: 'gringo' },
-  { nome: 'Karpathy', url: 'https://karpathy.bearblog.dev/feed/', tipo: 'gringo' },
-  { nome: 'Ethan Mollick', url: 'https://www.oneusefulthing.org/feed', tipo: 'gringo' },
-  { nome: 'Addy Osmani', url: 'https://addyo.substack.com/feed', tipo: 'gringo' },
-  { nome: "Ben's Bites", url: 'https://www.bensbites.com/feed', tipo: 'gringo' },
-  { nome: 'dev.to IA', url: 'https://dev.to/feed/tag/ai', tipo: 'gringo' },
-  { nome: 'Zenn IA', url: 'https://zenn.dev/topics/ai/feed', tipo: 'gringo', idioma: 'ja' },
-  { nome: 'Zenn Claude Code', url: 'https://zenn.dev/topics/claudecode/feed', tipo: 'gringo', idioma: 'ja' },
-  { nome: 'Qiita IA', url: 'https://qiita.com/tags/ai/feed', tipo: 'gringo', idioma: 'ja' },
-  // especialistas que postam menos: janela de 7 dias
-  { nome: 'Armin Ronacher', url: 'https://lucumr.pocoo.org/feed.atom', tipo: 'voz', dias: 7 },
-  { nome: 'Peter Steinberger', url: 'https://steipete.me/rss.xml', tipo: 'voz', dias: 7 },
-  { nome: 'Mitchell Hashimoto', url: 'https://mitchellh.com/feed.xml', tipo: 'voz', dias: 7 },
-  { nome: 'Hamel Husain', url: 'https://hamel.dev/index.xml', tipo: 'voz', dias: 7 },
-  { nome: 'Eugene Yan', url: 'https://eugeneyan.com/rss/', tipo: 'voz', dias: 7 },
-  { nome: 'Sebastian Raschka', url: 'https://magazine.sebastianraschka.com/feed', tipo: 'voz', dias: 7 },
-  { nome: 'Nathan Lambert (Interconnects)', url: 'https://www.interconnects.ai/feed', tipo: 'voz', dias: 7 },
-  { nome: 'Geoffrey Litt', url: 'https://www.geoffreylitt.com/feed.xml', tipo: 'voz', dias: 7 },
-  { nome: 'Harper Reed', url: 'https://harper.blog/index.xml', tipo: 'voz', dias: 7 },
-  { nome: 'swyx', url: 'https://www.swyx.io/rss.xml', tipo: 'voz', dias: 7 },
-  { nome: 'Thorsten Ball', url: 'https://registerspill.thorstenball.com/feed', tipo: 'voz', dias: 7 },
-  { nome: 'Lilian Weng', url: 'https://lilianweng.github.io/index.xml', tipo: 'voz', dias: 7 },
-  { nome: 'TabNews', url: 'https://www.tabnews.com.br/recentes/rss', tipo: 'comunidade', idioma: 'pt' },
-  { nome: 'Lobsters IA', url: 'https://lobste.rs/t/ai.rss', tipo: 'comunidade' },
-  { nome: 'Product Hunt', url: 'https://www.producthunt.com/feed', tipo: 'lancamento' },
-  // design
-  { nome: 'Codrops', url: 'https://tympanus.net/codrops/feed/', tipo: 'design' },
-  { nome: 'Figma Blog', url: 'https://www.figma.com/blog/feed/atom.xml', tipo: 'design' },
-  { nome: 'Smashing Magazine', url: 'https://www.smashingmagazine.com/feed/', tipo: 'design' },
-  { nome: 'Awwwards', url: 'https://www.awwwards.com/blog/feed/', tipo: 'design' },
-  { nome: 'Dribbble', url: 'https://dribbble.com/shots/popular.rss', tipo: 'design' },
-  { nome: 'Muzli', url: 'https://medium.muz.li/feed', tipo: 'design' }
-];
-
-const GITHUB_QUERIES = [
-  'topic:mcp',
-  'topic:claude',
-  'topic:ai-agents',
-  'topic:llm',
-  'claude skills in:name,description',
-  'topic:agent-skills',
-  'topic:generative-art',
-  'topic:design',
-  'topic:threejs'
-];
-
+// fontes e assuntos vêm do config.json (ou config.exemplo.json): cada pessoa escolhe o que quer acompanhar
+const { fontes } = carregarConfig();
+const RSS_SOURCES = fontes.rss;
+const GITHUB_QUERIES = fontes.github_buscas;
 // novas versões das ferramentas do dia a dia (o que mudou, o que foi corrigido)
-const RELEASE_REPOS = ['anthropics/claude-code', 'google-gemini/gemini-cli', 'openai/codex', 'ollama/ollama'];
-
-const HN_QUERIES = ['AI', 'LLM', 'Claude', 'Gemini', 'agent'];
+const RELEASE_REPOS = fontes.github_releases;
+const HN_QUERIES = fontes.hacker_news;
 
 function localDateStr(date = new Date()) {
   const y = date.getFullYear();
@@ -426,13 +372,14 @@ async function main() {
       fonte: `Release (${r})`,
       promise: fetchReleases(r, cutoff14Ms)
     })),
-    ...['daily', 'weekly', 'monthly'].map((s) => ({ fonte: `GitHub Trending (${s})`, promise: fetchTrending(s) })),
-    { fonte: 'Hugging Face Modelos', promise: fetchHuggingFace('models', cutoff14Ms) },
-    { fonte: 'Hugging Face Spaces', promise: fetchHuggingFace('spaces', cutoff14Ms) },
-    {
-      fonte: 'GitHub (stars:>300, 30 dias)',
-      promise: fetchGithubQuery('stars:>300', localDateStr(new Date(now - 30 * 86400 * 1000)))
-    },
+    ...(fontes.github_trending ? [
+      ...['daily', 'weekly', 'monthly'].map((s) => ({ fonte: `GitHub Trending (${s})`, promise: fetchTrending(s) })),
+      { fonte: 'GitHub (stars:>300, 30 dias)', promise: fetchGithubQuery('stars:>300', localDateStr(new Date(now - 30 * 86400 * 1000))) }
+    ] : []),
+    ...(fontes.hugging_face ? [
+      { fonte: 'Hugging Face Modelos', promise: fetchHuggingFace('models', cutoff14Ms) },
+      { fonte: 'Hugging Face Spaces', promise: fetchHuggingFace('spaces', cutoff14Ms) }
+    ] : []),
     ...RSS_SOURCES.map((s) => ({
       fonte: s.nome,
       promise: fetchRssSource(s, cutoffMs)

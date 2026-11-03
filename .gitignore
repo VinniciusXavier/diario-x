@@ -9,3 +9,6 @@ edicoes/teste-*.json
 
 .impeccable/live/
 node_modules/
+
+# configuração pessoal (IA, perfil e fontes de cada um)
+config.json
