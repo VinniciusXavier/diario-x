@@ -30,6 +30,29 @@ Você conta quem é e o que quer ler. A IA escolhe as fontes, cria as seções e
 </tr>
 </table>
 
+## Por dentro de uma edição
+
+<table>
+<tr>
+<td width="50%"><img src="docs/img/secao-design.png" alt="Seção com foto de destaque e cartões"></td>
+<td width="50%"><img src="docs/img/pizzaria-secao.png" alt="Seção Delivery & Food Service do jornal da pizzaria"></td>
+</tr>
+<tr>
+<td align="center"><sub><b>Seções com fotos</b> · o "pra você" abre com um clique</sub></td>
+<td align="center"><sub><b>Seções criadas para a pessoa</b> · aqui, Delivery & Food Service</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/img/editor.png" alt="Palavra do editor e passo a passo para testar hoje"></td>
+<td width="50%"><img src="docs/img/classificados.png" alt="Classificados com repositórios em alta"></td>
+</tr>
+<tr>
+<td align="center"><sub><b>Palavra do editor</b> e algo para testar hoje, em 3 passos</sub></td>
+<td align="center"><sub><b>Classificados</b> · repositórios em alta, por tipo</sub></td>
+</tr>
+</table>
+
+<p align="center"><img src="docs/img/mobile.png" alt="Diário X no celular" width="300"><br><sub><b>No celular</b></sub></p>
+
 ## Por que é diferente
 
 |   |   |

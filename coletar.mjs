@@ -338,6 +338,52 @@ async function fetchHnQuery(q, cutoffSec) {
   return out;
 }
 
+// O Google Notícias entrega um link dele mesmo (sem foto e sem o nome do portal). Pede ao próprio Google o link
+// real da matéria; se não der, o item fica com o link do Google.
+const UA_NAVEGADOR = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36';
+async function linkRealGoogleNoticias(url) {
+  const id = new URL(url).pathname.split('/').pop();
+  const html = await fetchWithTimeout(`https://news.google.com/articles/${id}`, { 'User-Agent': UA_NAVEGADOR });
+  const sig = html.match(/data-n-a-sg="([^"]+)"/)?.[1];
+  const ts = html.match(/data-n-a-ts="([^"]+)"/)?.[1];
+  if (!sig || !ts) return null;
+  const req = [[['Fbv4je', `["garturlreq",[["X","X",["X","X"],null,null,1,1,"US:en",null,1,null,null,null,null,null,0,1],"X","X",1,[1,1,1],1,1,null,0,0,null,0],"${id}",${ts},"${sig}"]`, null, 'generic']]];
+  const res = await fetch('https://news.google.com/_/DotsSplashUi/data/batchexecute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8', 'User-Agent': UA_NAVEGADOR },
+    body: 'f.req=' + encodeURIComponent(JSON.stringify(req)),
+    signal: AbortSignal.timeout(10000)
+  });
+  const real = JSON.parse(JSON.parse((await res.text()).split('\n\n')[1])[0][2])[1];
+  return /^https?:\/\//.test(real) ? real : null;
+}
+
+async function resolverGoogleNoticias(itens) {
+  const fila = itens.filter((it) => it.url.includes('news.google.com/'));
+  // devagar e parando no primeiro bloqueio: pedido demais faz o Google responder com a página "sorry"
+  let i = 0, falhas = 0;
+  const worker = async () => {
+    while (i < fila.length && falhas < 3) {
+      const it = fila[i++];
+      await new Promise((ok) => setTimeout(ok, 400));
+      try {
+        const real = await linkRealGoogleNoticias(it.url);
+        if (!real) { falhas++; continue; }
+        falhas = 0;
+        it.url = real;
+        // o título vem como "Manchete - Portal": o portal vira a fonte
+        const m = it.titulo.match(/^(.*\S)\s+-\s+([^-]{2,60})$/);
+        if (m) { it.via = it.fonte; it.titulo = m[1]; it.fonte = m[2].trim(); }
+      } catch {
+        falhas++; // fica com o link do Google
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: 2 }, worker));
+  if (falhas >= 3) console.log('Google Notícias: o Google pediu uma pausa; os links que faltaram ficam com o endereço do Google');
+  return fila.filter((it) => !it.url.includes('news.google.com/')).length;
+}
+
 function loadPublishedUrlsLast30Days() {
   const edicoesDir = path.join(ROOT, 'edicoes');
   const set = new Set();
@@ -416,6 +462,9 @@ async function main() {
     }
   });
 
+  const resolvidos = await resolverGoogleNoticias(rawItens);
+  if (resolvidos) console.log(`Google Notícias: ${resolvidos} links trocados pelo do portal`);
+
   // Deduplica por URL normalizada e remove URLs já publicadas nos últimos 30 dias
   const publishedUrls = loadPublishedUrlsLast30Days();
   const seenUrls = new Set();
@@ -452,7 +501,7 @@ async function main() {
   counts['GitHub'] = 0;
   counts['Hacker News'] = 0;
   for (const it of itens) {
-    counts[it.fonte] = (counts[it.fonte] || 0) + 1;
+    counts[it.via || it.fonte] = (counts[it.via || it.fonte] || 0) + 1;
   }
 
   console.log(`=== Coleta ${hojeStr} (--dias ${dias}) -> ${itens.length} itens, ${itens.filter((it) => it.imagem).length} com imagem ===`);

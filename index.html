@@ -116,9 +116,19 @@
   .ar-wide { aspect-ratio: 16 / 9; }
   .moldura { box-shadow: 0 0 0 4px var(--paper), 0 0 0 5.5px var(--rule-strong); }
 
-  /* ── "Pra você": a notinha ── */
-  .pv { margin: .8rem 0 1rem; padding: .6rem .8rem; background: color-mix(in srgb, var(--paper-2) 75%, transparent); border-radius: 2px; font: 600 var(--t-nota)/1.5 var(--sans); color: var(--ink); }
-  .pv b { display: block; font: 700 var(--t-rotulo)/1.3 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); margin-bottom: .15rem; }
+  .ar-card { aspect-ratio: 16 / 9; margin-bottom: 1rem; }
+  .sem-foto { display: grid; place-items: center; padding: 1rem; text-align: center; border: 1px solid var(--rule); background: color-mix(in srgb, var(--paper-2) 80%, transparent); }
+  .sem-foto span { font: italic 400 clamp(1.2rem, 1.6vw, 1.6rem)/1.2 var(--serif); color: var(--ink-2); }
+  .sem-foto::after { display: none; }
+
+  /* ── "Pra você": fechado é um botão; aberto vira a notinha ── */
+  .pv { margin: .8rem 0 1rem; }
+  .pv summary { display: inline-flex; align-items: center; gap: .4rem; list-style: none; cursor: pointer; min-height: 32px; padding: .4rem .8rem; border-radius: 999px; border: 1.5px solid color-mix(in srgb, var(--accent-solid) 70%, transparent); font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); transition: background 160ms var(--ease); }
+  .pv summary::-webkit-details-marker { display: none; }
+  .pv summary::before { content: "+"; font-size: 1.1em; line-height: 1; transition: transform 200ms var(--ease); }
+  .pv[open] summary::before { transform: rotate(45deg); }
+  .pv summary:hover { background: color-mix(in srgb, var(--accent-solid) 12%, transparent); }
+  .pv p { margin: .6rem 0 0; padding: .6rem .8rem; font: 600 var(--t-nota)/1.5 var(--sans); color: var(--ink); }
 
   /* ações: tinta por padrão; vermelho só onde é a ação do dia */
   .actions { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
@@ -148,7 +158,7 @@
 
   .editorial { border-top: 1px solid var(--rule-strong); padding: 2.2rem 0 2.4rem; text-align: center; }
   .editorial .rotulo { display: block; margin-bottom: .9rem; }
-  .editorial p { margin: 0 auto; max-width: 64ch; font: italic 400 1.1875rem/1.65 var(--serif); color: var(--ink-2); text-wrap: pretty; }
+  .editorial p { margin: 0 auto; max-width: 62ch; font: italic 400 clamp(1.3rem, 1.5vw, 1.6rem)/1.6 var(--serif); color: var(--ink-2); text-wrap: pretty; }
 
   /* Skill para testar hoje */
   .teste { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 2.4rem; border: 1.5px solid var(--rule-strong); padding: 1.8rem 2rem; margin-bottom: .6rem; }
@@ -170,7 +180,8 @@
 
   .feature { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.6rem; align-items: center; padding: 2.2rem 0; border-bottom: 1px solid var(--rule); }
   .feature h3.titulo { font-size: var(--t-secao); line-height: 1.15; }
-  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 2.8rem; }
+  /* até 3 colunas; com 2 matérias, as 2 dividem a largura em vez de deixar um buraco */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(260px, calc((100% - 5.6rem) / 3)), 1fr)); gap: 0 2.8rem; }
   .cards > article { padding: 1.8rem 0 2rem; border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; }
   .cards .actions { margin-top: auto; }
   .cards .pv { margin-bottom: 1.1rem; }
@@ -249,7 +260,7 @@
   .section { counter-increment: sec; }
   .sec-head h2::before { content: "№ " counter(sec, decimal-leading-zero); display: block; margin-bottom: .35rem; font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .14em; color: var(--accent-text); }
   .sec-head { align-items: flex-end; }
-  .pv { border-left: 3px solid var(--accent-solid); border-radius: 0 3px 3px 0; background: linear-gradient(90deg, color-mix(in srgb, var(--accent-solid) 9%, transparent), color-mix(in srgb, var(--paper-2) 70%, transparent) 70%); }
+  .pv p { border-left: 3px solid var(--accent-solid); border-radius: 0 3px 3px 0; background: linear-gradient(90deg, color-mix(in srgb, var(--accent-solid) 9%, transparent), color-mix(in srgb, var(--paper-2) 70%, transparent) 70%); }
   .cards > article { padding: 1.6rem 1.2rem 1.8rem; margin: 0 -1.2rem; border-bottom: 1px solid var(--rule); border-radius: 2px; transition: background 200ms var(--ease), box-shadow 200ms var(--ease); }
   .cards > article:hover { background: color-mix(in srgb, var(--paper-2) 55%, transparent); box-shadow: inset 3px 0 0 var(--accent-solid); }
   .ad { transition: transform 200ms var(--ease), box-shadow 200ms var(--ease); }
@@ -524,7 +535,17 @@ const noBloco = (url) => state.bloco.some((x) => x.fonte_url === url);
 const botaoNota = (url) => `<button class="note" data-nota="${esc(url)}" aria-pressed="${noBloco(url)}">${noBloco(url) ? '✓ No bloco' : '+ Bloco de notas'}</button>`;
 const fonte = (it) => `<a class="src" href="${esc(it.fonte_url)}" target="_blank" rel="noopener">Ler na fonte ${ICON_OUT}</a>`;
 let fotoN = 0;
+// cartão sem foto (ou com foto quebrada) ganha uma capa com o nome do portal, para a fileira ficar alinhada
+function trocarPorCapa(img) {
+  const s = document.createElement('span'); s.textContent = img.dataset.fonte;
+  img.parentElement.classList.add('sem-foto'); img.replaceWith(s);
+}
+const capa = (it) =>`<figure class="foto ar-card sem-foto"><span>${esc(it.fonte_nome)}</span></figure>`;
 function foto(it, cls) {
+  if (cls === 'ar-card') {
+    if (!it.imagem) return capa(it);
+    return `<figure class="foto ar-card" style="--d:-${(fotoN++ * 3.7) % 16}s"><img src="${esc(it.imagem)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fonte="${esc(it.fonte_nome)}" onerror="trocarPorCapa(this)"></figure>`;
+  }
   if (!it.imagem) return '';
   return `<figure class="foto ${cls}" style="--d:-${(fotoN++ * 3.7) % 16}s"><img src="${esc(it.imagem)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.remove()"></figure>`;
 }
@@ -532,7 +553,8 @@ function byline(it) {
   const trad = it.idioma && it.idioma !== 'pt' && it.titulo_original ? ` · <span class="trad">traduzido do ${IDIOMAS[it.idioma] || it.idioma}</span>` : '';
   return `<p class="byline">Por ${esc(it.fonte_nome)} · ${quando(it.publicado_em, state.sel)}${trad}</p>`;
 }
-const pv = (it) => `<p class="pv"><b>Pra você</b>${esc(it.pra_voce)}</p>`;
+// "pra você" fica fechado: a página respira e quem quer abre
+const pv = (it) => it.pra_voce ? `<details class="pv"><summary>Pra você</summary><p>${esc(it.pra_voce)}</p></details>` : '';
 const titulo = (it) => `<h3 class="titulo"><a href="${esc(it.fonte_url)}" target="_blank" rel="noopener">${esc(it.titulo)}</a></h3>`;
 
 function destaque(it) {
@@ -541,9 +563,10 @@ function destaque(it) {
     <div>${titulo(it)}${byline(it)}<p class="resumo">${esc(it.resumo)}</p>${pv(it)}<div class="actions">${fonte(it)}${botaoSalvar(it)}</div></div>
   </article>`;
 }
-function cartao(it, escondido) {
+// comFoto: algum cartão da seção tem foto; aí quem não tem ganha a capa, para a fileira alinhar
+function cartao(it, escondido, comFoto) {
   return `<article id="m-${esc(it.id)}"${escondido ? ' hidden' : ''}>
-    ${titulo(it)}${byline(it)}<p class="resumo">${esc(it.resumo)}</p>${pv(it)}<div class="actions">${fonte(it)}${botaoSalvar(it)}</div>
+    ${comFoto ? foto(it, 'ar-card') : ''}${titulo(it)}${byline(it)}<p class="resumo">${esc(it.resumo)}</p>${pv(it)}<div class="actions">${fonte(it)}${botaoSalvar(it)}</div>
   </article>`;
 }
 
@@ -648,10 +671,11 @@ function render() {
     let corpo;
     if (c.id === 'classificados') corpo = classificados(lista);
     else {
-      const [primeiro, ...outros] = lista;
+      // destaque só com foto; sem foto, todas as matérias da seção ficam lado a lado, do mesmo tamanho
+      const [primeiro, ...outros] = lista[0].imagem ? lista : [null, ...lista];
       const aberto = state.abertos.has(c.id);
-      corpo = destaque(primeiro)
-        + `<div class="cards">${outros.map((it, k) => cartao(it, !aberto && k >= VISIVEIS)).join('')}</div>`
+      corpo = (primeiro ? destaque(primeiro) : '')
+        + `<div class="cards">${outros.map((it, k) => cartao(it, !aberto && k >= VISIVEIS, outros.some((x) => x.imagem))).join('')}</div>`
         + botaoMais(c.id, outros.length - VISIVEIS, c.nome);
     }
     html += `<section class="section" id="${c.id}" data-bloco="${c.id}">
