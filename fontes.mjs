@@ -189,4 +189,4 @@ if (!comando) {
   console.log(fs.readFileSync(new URL(import.meta.url), 'utf-8').split('\n').slice(0, 6).join('\n').replace(/^\/\/ ?/gm, ''));
   process.exit(args[0] ? 1 : 0);
 }
-Promise.resolve(comando()).catch((err) => { console.error(`Erro: ${err.message}`); process.exit(1); });
+Promise.resolve().then(comando).catch((err) => { console.error(`Erro: ${err.message}`); process.exit(1); });

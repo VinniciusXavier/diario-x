@@ -73,12 +73,11 @@ cd diario-x
 ```
 
 ```bash
-cp config.exemplo.json config.json   # depois edite: IA, perfil e fontes
-```
-
-```bash
 node server.mjs          # abre em http://127.0.0.1:51810 (ou dois cliques no Diario-X.bat)
 ```
+
+Na primeira vez o painel **Configurar** abre sozinho: você conta o que quer ler, escolhe o tamanho da edição, a IA e as
+fontes. Dá para reabrir pelo botão de ajustes, ao lado do bloco de notas.
 
 Montar a edição de hoje na mão:
 
@@ -99,13 +98,17 @@ Agendar todo dia às 09:00 e ao ligar o PC (Windows, PowerShell):
 |---|---|
 | `DIARIO_PORT` | porta do servidor (padrão `51810`) |
 | `DIARIO_MODELO` | troca o modelo do config só nesta execução |
-| `NEUROOS_INBOX` | pasta onde o botão "Salvar" grava `diario-x.jsonl` (padrão `~/NeuroOS/brain/inbox`) |
+| `NEUROOS_INBOX` | com `"neuroos": true`, pasta onde o "Salvar no NeuroOS" grava `diario-x.jsonl` (padrão `~/NeuroOS/brain/inbox`) |
 | `GITHUB_TOKEN` | aumenta o limite da API do GitHub na coleta |
 
 ## Configurar
 
 Tudo o que muda de pessoa para pessoa fica no `config.json` (fora do Git; o modelo é o
-[`config.exemplo.json`](config.exemplo.json)). São três partes:
+[`config.exemplo.json`](config.exemplo.json)). O jeito fácil é pelo próprio jornal:
+
+![Painel Configurar](docs/img/configurar.png)
+
+O painel grava no `config.json`. Quem preferir edita o arquivo direto; são estas partes:
 
 ### 1. Qual IA monta a edição (`ia`)
 
@@ -140,7 +143,24 @@ use um modelo com contexto de pelo menos 64 mil tokens.
 Um parágrafo sobre você: profissão, ferramentas, projetos, o que quer e o que não quer ler. É daí que sai o "pra você"
 de cada matéria. Vazio, vale o **Perfil do leitor** de `docs/SKILL-diario-x.md`.
 
-### 3. De onde vêm as notícias (`fontes`)
+### 3. Quantas notícias (`edicao.tamanho`)
+
+| Tamanho | Matérias por edição |
+|---|---|
+| `enxuta` | 15 a 20 |
+| `normal` | 25 a 35 (padrão do exemplo) |
+| `completa` | 45 a 55 |
+
+As seções continuam as mesmas; o que muda é quantas matérias entram em cada uma.
+
+### 4. Detalhes da página
+
+| Campo | O que faz |
+|---|---|
+| `cidade` | aparece no cabeçalho, ao lado da data (vazio, some) |
+| `neuroos` | `true` mostra o botão "Salvar no NeuroOS" (o segundo cérebro do autor). Desligado por padrão: todo mundo tem o bloco de notas |
+
+### 5. De onde vêm as notícias (`fontes`)
 
 | Campo | O que é |
 |---|---|
@@ -172,8 +192,9 @@ node fontes.mjs testar                                           # mostra os fee
 ## Recursos do leitor
 
 - **Hoje / Semana / Mês:** a edição do dia ou a soma das anteriores
-- **Salvar no NeuroOS:** manda a matéria para o segundo cérebro (`brain/inbox/diario-x.jsonl`)
-- **Bloco de notas:** junta trechos enquanto lê
+- **Bloco de notas:** junta matérias e anotações enquanto lê; copia ou baixa em `.md`
+- **Configurar:** interesses, tamanho da edição, fontes e IA, sem abrir arquivo
+- **Salvar no NeuroOS** (só com `"neuroos": true`): manda a matéria para o segundo cérebro
 - **Tema claro e escuro**, navegação por teclado nas abas e edições anteriores pelo seletor de número
 
 ## Arquivos
@@ -187,7 +208,7 @@ node fontes.mjs testar                                           # mostra os fee
 | `coletar.mjs` | RSS, GitHub (busca, trending, releases), Hugging Face, HN, conforme as fontes do config; sem IA |
 | `rodar-edicao.mjs` | chama a IA do config, valida e tenta de novo, até 3 vezes |
 | `validar.mjs` | confere formato, links e repetição; preenche fotos; reescreve `edicoes/index.json` |
-| `server.mjs` | serve o site e recebe o "Salvar" |
+| `server.mjs` | serve o site, grava o painel Configurar no `config.json` e roda a busca de fontes |
 | `index.html` | o jornal inteiro, num arquivo só |
 | `instalar-agendamento.ps1` | agenda `rodar-edicao.mjs` às 09:00 e ao ligar o PC |
 | `docs/SKILL-diario-x.md` | regras editoriais do agente: seções, quantidades, tom e formato |
@@ -196,16 +217,14 @@ node fontes.mjs testar                                           # mostra os fee
 
 ## Adaptar para você
 
-1. `cp config.exemplo.json config.json` e preencha `ia` e `leitor` (seção [Configurar](#configurar)). Para as fontes,
-   rode `node fontes.mjs descobrir "seu tema"` e `node fontes.mjs aplicar`, ou edite `fontes` na mão.
+1. Rode `node server.mjs` e preencha o painel **Configurar** que abre sozinho: interesses, tamanho, IA e, em Fontes,
+   "Procurar com a IA" e depois "Usar as fontes aprovadas".
 2. Apague as edições de exemplo em `edicoes/` (deixe `index.json` como `{ "edicoes": [] }`) para começar do nº 1.
 3. Confira com `node rodar-edicao.mjs --simular`, rode `node rodar-edicao.mjs` uma vez e, se quiser, agende com
    `instalar-agendamento.ps1`.
 
 Para mudar as regras do jornal (seções, quantidades, tom), edite `docs/SKILL-diario-x.md`. Uma skill instalada em
 `~/.claude/skills/diario-x/SKILL.md` tem prioridade sobre ela.
-
-Sem NeuroOS, o botão "Salvar" grava num arquivo `.jsonl` comum na pasta de `NEUROOS_INBOX`.
 
 ---
 

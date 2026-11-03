@@ -6,7 +6,7 @@
 // Se a edição do dia já existe, não faz nada; então os dois gatilhos não duplicam.
 import fs from 'node:fs';
 import path from 'node:path';
-import { ROOT, carregarConfig } from './config.mjs';
+import { ROOT, carregarConfig, TAMANHOS } from './config.mjs';
 import { IA, MODELO, VIA_API, AGY, SKILL, PROVEDORES, NOME_IA, comandoAgente, rodar, pedirIA } from './ia.mjs';
 
 const cfg = carregarConfig();
@@ -56,6 +56,11 @@ function prompt(erros, viaApi) {
       : 'Escolha os itens da coleta; para completar (Anthropic, Google, Awwwards) abra a página oficial. Todo texto em português do Brasil.',
     'Regra inegociável: toda fonte_url veio da coleta ou de uma página que você abriu. Nunca invente link, data ou número.',
   ];
+  const t = TAMANHOS[cfg.edicao.tamanho];
+  if (t && cfg.edicao.tamanho !== 'completa') {
+    base.push(`Tamanho desta edição: "${cfg.edicao.tamanho}", ${t.total} matérias no total (vale no lugar das quantidades da skill): ` +
+      `inovacoes ${t.inovacoes}, design ${t.design}, resultados ${t.resultados}, vozes ${t.vozes}, classificados ${t.classificados}. Escolha só as melhores.`);
+  }
   if (cfg.leitor) base.push(`Perfil do leitor (vale no lugar do "Perfil do leitor" da skill; é para ele o "pra você"):\n${cfg.leitor}`);
   if (!viaApi) {
     base.push(`Só escreva ${arquivo}: não altere nenhum outro arquivo e não rode comandos (a validação roda depois, fora de você).`);

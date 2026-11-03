@@ -268,7 +268,7 @@
   .icon-btn .badge { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--accent-solid); color: var(--on-accent); font: 700 .6875rem/18px var(--sans); text-align: center; }
   .gaveta-fundo { position: fixed; inset: 0; z-index: 40; background: #0008; opacity: 0; pointer-events: none; transition: opacity 240ms var(--ease); }
   .gaveta { position: fixed; top: 0; right: 0; bottom: 0; z-index: 41; width: min(440px, 100%); display: flex; flex-direction: column; background: var(--paper); border-left: 1.5px solid var(--rule-strong); box-shadow: -30px 0 60px -30px #000a; transform: translateX(104%); transition: transform 340ms var(--ease); }
-  body.gaveta-aberta .gaveta { transform: none; }
+  .gaveta.aberta { transform: none; }
   body.gaveta-aberta .gaveta-fundo { opacity: 1; pointer-events: auto; }
   .gaveta header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; border-bottom: 4px double var(--rule-strong); }
   .gaveta h2 { margin: 0; font: 400 1.9rem/1 var(--logo); }
@@ -282,6 +282,23 @@
   .gaveta .guardado .byline { margin: .2rem 0 .5rem; }
   .gaveta .byline::before { display: none; }
   .gaveta .vazio { color: var(--ink-2); font-style: italic; }
+  /* ── Configurar (mesma gaveta, com formulário) ── */
+  .ajustes .intro { margin: 0 0 1.2rem; color: var(--ink-2); font: italic 400 var(--t-texto)/1.5 var(--serif); }
+  .ajustes fieldset { border: 0; margin: 0 0 1.5rem; padding: 0; }
+  .ajustes legend, .ajustes label.rotulo { display: block; margin-bottom: .5rem; }
+  .ajustes .dica { margin: .4rem 0 0; color: var(--ink-3); font: 400 var(--t-nota)/1.4 var(--sans); }
+  .ajustes input[type="text"], .ajustes select, .ajustes textarea { width: 100%; padding: .65rem .75rem; border: 1.5px solid var(--rule-strong); border-radius: 3px; background: color-mix(in srgb, var(--paper-2) 50%, transparent); color: var(--ink); font: 400 var(--t-texto)/1.4 var(--sans); }
+  .ajustes textarea { min-height: 140px; resize: vertical; font-family: var(--serif); line-height: 1.55; }
+  .ajustes .linha { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: .6rem; }
+  .tamanhos { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+  .tamanhos label { display: grid; gap: .15rem; padding: .7rem .6rem; border: 1.5px solid var(--rule-strong); border-radius: 3px; cursor: pointer; text-align: center; font: 700 var(--t-rotulo)/1.2 var(--sans); text-transform: uppercase; letter-spacing: .05em; }
+  .tamanhos label small { font: 400 var(--t-nota)/1.2 var(--sans); text-transform: none; letter-spacing: 0; color: var(--ink-2); }
+  .tamanhos input { position: absolute; opacity: 0; pointer-events: none; }
+  .tamanhos label:has(input:checked) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .tamanhos label:has(input:checked) small { color: inherit; }
+  .tamanhos label:has(input:focus-visible) { outline: 2px solid var(--accent-solid); outline-offset: 2px; }
+  .busca-log { margin: .7rem 0 0; max-height: 220px; overflow: auto; padding: .7rem; border: 1px solid var(--rule); border-radius: 3px; font: 400 .78rem/1.5 ui-monospace, monospace; white-space: pre-wrap; color: var(--ink-2); }
+  .ajustes .salvar { width: 100%; justify-content: center; min-height: 44px; }
   @media (prefers-reduced-motion: reduce) { .gaveta, .gaveta-fundo, .ad, .cards > article, .banner a { transition: none; } }
   @media (max-width: 640px) { .cards > article { margin: 0; padding: 1.4rem 0 1.6rem; } }
 </style>
@@ -299,7 +316,7 @@
       <div class="motto">O que muda o seu dia, com a fonte na mão.</div>
     </div>
     <div class="dateline rotulo">
-      <span class="side">Franca · SP</span>
+      <span class="side" id="cidade"></span>
       <span id="dateline"></span>
       <span class="side" id="leitura"></span>
     </div>
@@ -319,6 +336,9 @@
         <button class="icon-btn" id="bloco-btn" aria-label="Abrir o bloco de notas" aria-haspopup="dialog">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 3h11l3 3v15H5z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
           <span class="badge" id="bloco-n" hidden>0</span>
+        </button>
+        <button class="icon-btn" id="ajustes-btn" aria-label="Configurar o jornal" aria-haspopup="dialog" hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
         </button>
         <button class="icon-btn" id="theme" aria-label="Alternar edição diurna e noturna">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
@@ -351,6 +371,54 @@
     <div id="guardados"></div>
   </div>
 </aside>
+<aside class="gaveta ajustes" id="ajustes" role="dialog" aria-modal="true" aria-labelledby="ajustes-t" aria-hidden="true" inert>
+  <header>
+    <h2 id="ajustes-t">Configurar</h2>
+    <button class="icon-btn" data-fechar aria-label="Fechar a configuração"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+  </header>
+  <form class="corpo" id="ajustes-form">
+    <p class="intro" id="ajustes-intro">Vale a partir da próxima edição.</p>
+
+    <fieldset>
+      <label class="rotulo" for="aj-leitor">Seus interesses</label>
+      <textarea id="aj-leitor" placeholder="Ex.: sou dev front-end em Recife, uso React e Cursor, quero novidades de IA para código e design. Não quero notícia de investimento. Prefiro dicas que dá para testar em 20 minutos."></textarea>
+      <p class="dica">Quem você é, o que usa e o que quer (ou não quer) ler. É daqui que sai o "pra você" de cada matéria.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend class="rotulo">Tamanho da edição</legend>
+      <div class="tamanhos" id="aj-tamanhos"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend class="rotulo">Fontes</legend>
+      <p class="dica" id="aj-feeds" style="margin-top:0"></p>
+      <div class="linha" style="grid-template-columns:1fr auto">
+        <input type="text" id="aj-tema" aria-label="Tema para procurar fontes" placeholder="Tema (vazio = seus interesses)">
+        <button type="button" class="src" id="aj-buscar">Procurar com a IA</button>
+      </div>
+      <pre class="busca-log" id="aj-log" hidden></pre>
+      <button type="button" class="save principal" id="aj-aplicar" hidden style="margin-top:.6rem">Usar as fontes aprovadas</button>
+      <p class="dica">A IA lista portais e especialistas do tema; cada feed é aberto e conferido antes de entrar.</p>
+    </fieldset>
+
+    <fieldset>
+      <label class="rotulo" for="aj-provedor">IA que monta a edição</label>
+      <select id="aj-provedor"></select>
+      <div class="linha">
+        <input type="text" id="aj-modelo" aria-label="Modelo" placeholder="Modelo (vazio = padrão)">
+        <input type="text" id="aj-cidade" aria-label="Cidade no cabeçalho" placeholder="Cidade no cabeçalho">
+      </div>
+      <div class="linha" id="aj-api" hidden>
+        <input type="text" id="aj-api-url" aria-label="Endereço da API" placeholder="https://api.openai.com/v1">
+        <input type="text" id="aj-chave" aria-label="Variável de ambiente da chave" placeholder="OPENAI_API_KEY">
+      </div>
+      <p class="dica" id="aj-ia-dica"></p>
+    </fieldset>
+
+    <button type="submit" class="save principal salvar">Salvar</button>
+  </form>
+</aside>
 
 <script>
 const CATS = [
@@ -376,7 +444,7 @@ const JANELA = { '24h': 0, semana: 6, mes: 29 }; // dias de edições anteriores
 const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const DIAS = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 
-const state = { bloco: lerBloco(), nota: store('dx-nota') || '', indice: [], edicoes: new Map(), sel: null, periodo: store('dx-aba') || '24h', abertos: new Set(), salvos: new Set() };
+const state = { bloco: lerBloco(), nota: store('dx-nota') || '', indice: [], edicoes: new Map(), sel: null, periodo: store('dx-aba') || '24h', abertos: new Set(), salvos: new Set(), cfg: null };
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const parseDia = (d) => new Date(d + 'T12:00:00');
@@ -392,10 +460,17 @@ async function getJSON(url) { const r = await fetch(url, { cache: 'no-store' });
 
 async function boot() {
   const t = store('dx-theme'); if (t) document.documentElement.dataset.theme = t;
+  // config vem do servidor; aberto como arquivo, o jornal só lê
+  try { state.cfg = await getJSON('api/config'); } catch { /* sem servidor */ }
+  if (state.cfg) {
+    $('#cidade').textContent = state.cfg.cidade;
+    $('#ajustes-btn').hidden = false;
+    if (!state.cfg.configurado) setTimeout(() => abrirAjustes(true), 400);
+  }
   try { state.indice = (await getJSON('edicoes/index.json')).edicoes; }
   catch { $('#main').innerHTML = '<div class="empty">Não consegui abrir as edições. Abra o Diário pelo atalho Diario-X.bat.</div>'; return; }
   if (!state.indice.length) { $('#main').innerHTML = '<div class="empty">A primeira edição ainda não saiu da gráfica.</div>'; return; }
-  try { state.salvos = new Set((await getJSON('api/salvos')).urls); } catch { /* sem API: salvar vira copiar */ }
+  if (state.cfg?.neuroos) try { state.salvos = new Set((await getJSON('api/salvos')).urls); } catch { /* sem API: salvar vira copiar */ }
   const sel = $('#ed-select');
   sel.innerHTML = state.indice.map((e) => `<option value="${e.data}">Nº ${e.numero} · ${e.data.slice(8)}/${e.data.slice(5, 7)}</option>`).join('');
   sel.onchange = () => abrir(sel.value);
@@ -426,7 +501,9 @@ function itensDoPeriodo() {
   return out;
 }
 
-function botaoSalvar(it, principal = false) {
+// "Salvar no NeuroOS" só aparece com "neuroos": true no config; o bloco de notas vale para todos
+const botaoSalvar = (it, principal = false) => (state.cfg?.neuroos ? botaoNeuro(it, principal) : '') + botaoNota(it.fonte_url);
+function botaoNeuro(it, principal = false) {
   const s = state.salvos.has(it.fonte_url);
   return `<button class="save${principal ? ' principal' : ''}" data-url="${esc(it.fonte_url)}" data-state="${s ? 'saved' : ''}" ${s ? 'disabled' : ''}
     aria-label="${s ? 'Já salvo no NeuroOS' : 'Salvar no NeuroOS'}: ${esc(it.titulo)}">${s ? 'Salvo no NeuroOS' : 'Salvar no NeuroOS'}</button>`;
@@ -575,7 +652,6 @@ function render() {
     </section>`;
   } else html = '<div class="empty">Nada nesta janela ainda.</div>';
   $('#main').innerHTML = html;
-  document.querySelectorAll('#main .save').forEach((b) => b.insertAdjacentHTML('afterend', botaoNota(b.dataset.url)));
   posThumb();
 }
 
@@ -655,7 +731,7 @@ $('#main').addEventListener('click', async (e) => {
     const j = await r.json();
     if (!r.ok) throw new Error(j.error || r.status);
     state.salvos.add(url);
-    document.querySelectorAll(`.save[data-url="${CSS.escape(url)}"]`).forEach((x) => { x.outerHTML = botaoSalvar(it, x.classList.contains('principal')); });
+    document.querySelectorAll(`.save[data-url="${CSS.escape(url)}"]`).forEach((x) => { x.outerHTML = botaoNeuro(it, x.classList.contains('principal')); });
     toast(j.status === 'already_saved' ? 'Já estava no NeuroOS' : 'Guardado na caixa de entrada do NeuroOS');
   } catch {
     try { await navigator.clipboard.writeText(markdown(it)); toast('Servidor desligado: copiei a nota para colar no NeuroOS'); }
@@ -684,20 +760,22 @@ function markdownBloco() {
   }
   return p.join('\n');
 }
-function abrirGaveta() {
+// as duas gavetas (bloco de notas e configurar) abrem pelo mesmo caminho
+function abrirGaveta(g = $('#gaveta'), foco = '#nota-livre') {
   focoAntes = document.activeElement;
-  const g = $('#gaveta'); g.inert = false; g.setAttribute('aria-hidden', 'false');
+  g.inert = false; g.setAttribute('aria-hidden', 'false'); g.classList.add('aberta');
   document.body.classList.add('gaveta-aberta');
-  setTimeout(() => $('#nota-livre').focus(), 60);
+  setTimeout(() => g.querySelector(foco)?.focus(), 60);
 }
 function fecharGaveta() {
-  const g = $('#gaveta'); g.inert = true; g.setAttribute('aria-hidden', 'true');
+  document.querySelectorAll('.gaveta.aberta').forEach((g) => { g.inert = true; g.setAttribute('aria-hidden', 'true'); g.classList.remove('aberta'); });
   document.body.classList.remove('gaveta-aberta');
   focoAntes?.focus?.();
 }
 $('#nota-livre').value = state.nota;
 $('#nota-livre').addEventListener('input', (e) => { state.nota = e.target.value; store('dx-nota', state.nota); });
-$('#bloco-btn').onclick = abrirGaveta;
+$('#bloco-btn').onclick = () => abrirGaveta();
+document.querySelectorAll('[data-fechar]').forEach((b) => { b.onclick = fecharGaveta; });
 $('#gaveta-x').onclick = fecharGaveta;
 $('#gaveta-fundo').onclick = fecharGaveta;
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('gaveta-aberta')) fecharGaveta(); });
@@ -715,6 +793,88 @@ $('#nota-baixar').onclick = () => {
   a.download = 'bloco-de-notas-diario-x.md'; a.click(); URL.revokeObjectURL(a.href);
 };
 atualizarBloco();
+
+/* ── Configurar: interesses, tamanho, fontes e IA (grava no config.json pelo servidor) ── */
+const IA_DICA = {
+  antigravity: 'Precisa do CLI agy instalado e logado.',
+  claude: 'Precisa do Claude Code (claude) instalado e logado.',
+  gemini: 'Precisa do Gemini CLI (gemini) instalado e logado.',
+  codex: 'Precisa do Codex CLI (codex) instalado e logado.',
+  api: 'Qualquer API no formato da OpenAI (OpenAI, OpenRouter, Groq, Ollama…). A chave fica numa variável de ambiente; aqui vai só o nome dela.',
+  comando: 'Outro CLI: defina "comando" e "args" direto no config.json.',
+};
+const IA_NOME = { antigravity: 'Antigravity', claude: 'Claude Code', gemini: 'Gemini CLI', codex: 'Codex', api: 'API (OpenAI, OpenRouter, Ollama…)', comando: 'Outro comando' };
+function preencherAjustes() {
+  const c = state.cfg;
+  $('#aj-leitor').value = c.leitor;
+  $('#aj-tamanhos').innerHTML = Object.entries(c.tamanhos).map(([id, t]) =>
+    `<label><input type="radio" name="tamanho" value="${id}" ${id === c.tamanho ? 'checked' : ''}>${id}<small>${t.total} matérias</small></label>`).join('');
+  $('#aj-feeds').textContent = `${c.feeds} feeds no jornal agora.`;
+  $('#aj-provedor').innerHTML = c.provedores.map((p) => `<option value="${p}" ${p === c.ia.provedor ? 'selected' : ''}>${IA_NOME[p] || p}</option>`).join('');
+  $('#aj-modelo').value = c.ia.modelo;
+  $('#aj-cidade').value = c.cidade;
+  $('#aj-api-url').value = c.ia.api_url;
+  $('#aj-chave').value = c.ia.chave_env;
+  mostrarIA();
+}
+function mostrarIA() {
+  const p = $('#aj-provedor').value;
+  $('#aj-api').hidden = p !== 'api';
+  $('#aj-ia-dica').textContent = IA_DICA[p] || '';
+}
+function abrirAjustes(primeiraVez = false) {
+  preencherAjustes();
+  $('#ajustes-intro').textContent = primeiraVez
+    ? 'Primeira vez aqui. Conte o que você quer ler, escolha o tamanho e a IA. As notícias de exemplo continuam atrás.'
+    : 'Vale a partir da próxima edição.';
+  abrirGaveta($('#ajustes'), '#aj-leitor');
+}
+$('#ajustes-btn').onclick = () => abrirAjustes();
+$('#aj-provedor').onchange = mostrarIA;
+$('#ajustes-form').onsubmit = async (e) => {
+  e.preventDefault();
+  const corpo = {
+    leitor: $('#aj-leitor').value,
+    cidade: $('#aj-cidade').value,
+    tamanho: document.querySelector('[name="tamanho"]:checked')?.value,
+    ia: { provedor: $('#aj-provedor').value, modelo: $('#aj-modelo').value, api_url: $('#aj-api-url').value, chave_env: $('#aj-chave').value },
+  };
+  try {
+    const r = await fetch('api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
+    if (!r.ok) throw new Error(r.status);
+    state.cfg = await r.json();
+    $('#cidade').textContent = state.cfg.cidade;
+    fecharGaveta();
+    toast('Configuração salva. Vale a partir da próxima edição.');
+  } catch { toast('Não consegui salvar. O servidor está ligado?'); }
+};
+// a busca de fontes leva minutos: o servidor roda em segundo plano e a página mostra o andamento
+async function acompanharBusca() {
+  const log = $('#aj-log');
+  for (;;) {
+    const b = await getJSON('api/fontes');
+    log.hidden = false; log.textContent = b.saida || 'A IA está procurando… pode levar alguns minutos.';
+    log.scrollTop = log.scrollHeight;
+    if (!b.rodando) {
+      $('#aj-buscar').disabled = false;
+      $('#aj-aplicar').hidden = !b.aprovadas;
+      state.cfg = await getJSON('api/config');
+      $('#aj-feeds').textContent = `${state.cfg.feeds} feeds no jornal agora.`;
+      return;
+    }
+    await new Promise((ok) => setTimeout(ok, 2000));
+  }
+}
+async function pedirFontes(corpo) {
+  $('#aj-buscar').disabled = true; $('#aj-aplicar').hidden = true;
+  try {
+    const r = await fetch('api/fontes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
+    if (!r.ok && r.status !== 409) throw new Error(r.status);
+    await acompanharBusca();
+  } catch { $('#aj-buscar').disabled = false; toast('Não consegui falar com o servidor'); }
+}
+$('#aj-buscar').onclick = () => pedirFontes({ tema: $('#aj-tema').value.trim() || $('#aj-leitor').value.trim() });
+$('#aj-aplicar').onclick = () => pedirFontes({ acao: 'aplicar' });
 
 boot();
 </script>

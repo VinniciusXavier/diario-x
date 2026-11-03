@@ -9,6 +9,11 @@
     }
   },
   "leitor": "Exemplo: designer de produto em São Paulo, usa Figma e Claude Code, quer novidades de IA aplicada a design e front-end. Não lê inglês: tudo em português. Prefere ações pequenas que dá para testar em 20 minutos.",
+  "cidade": "",
+  "edicao": {
+    "tamanho": "normal"
+  },
+  "neuroos": false,
   "fontes": {
     "rss": [
       {
