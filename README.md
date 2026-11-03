@@ -153,6 +153,22 @@ de cada matéria. Vazio, vale o **Perfil do leitor** de `docs/SKILL-diario-x.md`
 Quer um jornal de outro assunto (marketing, games, front-end)? Troque os feeds e as buscas. As seções do jornal
 continuam as mesmas; o que entra em cada uma muda junto com as fontes e o perfil.
 
+#### Sem editar JSON na mão
+
+```bash
+node fontes.mjs adicionar meioemensagem.com.br --tipo imprensa   # você sugere um site: o script acha o feed
+node fontes.mjs descobrir "marketing digital no Brasil"          # a IA procura as maiores referências da área
+node fontes.mjs aplicar                                          # põe no config o que a busca aprovou
+node fontes.mjs testar                                           # mostra os feeds quebrados
+```
+
+- **Você sugere:** passe o endereço do site. O script tenta o próprio link, o feed anunciado na página e os
+  caminhos de sempre (`/feed`, `/rss.xml`…). Só entra se abrir e tiver matérias.
+- **A IA procura:** a IA do config lista portais, blogs oficiais, especialistas, newsletters e comunidades do tema,
+  mais buscas do GitHub e palavras para o Hacker News. O script abre cada feed e descarta o que não funciona ou não
+  existe, então endereço inventado não passa. Sem tema, usa o `leitor` do config.
+- A lista aprovada fica em `coleta/fontes-verificadas.json` até você rodar `aplicar`: dá para olhar antes.
+
 ## Recursos do leitor
 
 - **Hoje / Semana / Mês:** a edição do dia ou a soma das anteriores
@@ -166,6 +182,8 @@ continuam as mesmas; o que entra em cada uma muda junto com as fontes e o perfil
 |---|---|
 | `config.exemplo.json` | modelo de configuração: IA, perfil do leitor e fontes |
 | `config.mjs` | lê o `config.json` (ou o exemplo) |
+| `ia.mjs` | chama a IA do config (agente ou API); usado pela edição e pela busca de fontes |
+| `fontes.mjs` | adiciona, descobre com IA e testa as fontes do config |
 | `coletar.mjs` | RSS, GitHub (busca, trending, releases), Hugging Face, HN, conforme as fontes do config; sem IA |
 | `rodar-edicao.mjs` | chama a IA do config, valida e tenta de novo, até 3 vezes |
 | `validar.mjs` | confere formato, links e repetição; preenche fotos; reescreve `edicoes/index.json` |
@@ -178,7 +196,8 @@ continuam as mesmas; o que entra em cada uma muda junto com as fontes e o perfil
 
 ## Adaptar para você
 
-1. `cp config.exemplo.json config.json` e preencha `ia`, `leitor` e `fontes` (seção [Configurar](#configurar)).
+1. `cp config.exemplo.json config.json` e preencha `ia` e `leitor` (seção [Configurar](#configurar)). Para as fontes,
+   rode `node fontes.mjs descobrir "seu tema"` e `node fontes.mjs aplicar`, ou edite `fontes` na mão.
 2. Apague as edições de exemplo em `edicoes/` (deixe `index.json` como `{ "edicoes": [] }`) para começar do nº 1.
 3. Confira com `node rodar-edicao.mjs --simular`, rode `node rodar-edicao.mjs` uma vez e, se quiser, agende com
    `instalar-agendamento.ps1`.
