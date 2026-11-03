@@ -93,6 +93,8 @@ function configPublica() {
     provedores: PROVEDORES,
     feeds: cfg.fontes.rss.length,
     buscas: cfg.fontes.google_noticias.length,
+    secoes: (cfg.secoes || []).map((s) => s.nome),
+    caderno: cfg.caderno,
   };
 }
 

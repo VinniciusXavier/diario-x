@@ -153,14 +153,32 @@ de cada matéria. Vazio, vale o **Perfil do leitor** de `docs/SKILL-diario-x.md`
 
 As seções continuam as mesmas; o que muda é quantas matérias entram em cada uma.
 
-### 4. Detalhes da página
+### 4. Seções e caderno (`secoes`, `caderno`)
+
+O jornal não é só de tecnologia. Quando a IA procura as fontes e você escolhe **trocar**, ela também monta as seções
+pensadas para você e o nome do caderno. Para a dona de uma pizzaria em BH, por exemplo, saiu:
+
+> **Caderno de Food Service & Delivery** · Delivery & Food Service · Marketing & Redes Sociais ·
+> Casos Reais & Gestão · IA para Pequeno Negócio · Belo Horizonte & Região
+
+![Edição feita para uma pizzaria em BH](docs/img/exemplo-pizzaria.png)
+
+```json
+"caderno": "Caderno de Food Service & Delivery",
+"secoes": [{ "id": "delivery", "nome": "Delivery & Food Service", "sub": "Mercado, apps e tendências do setor" }]
+```
+
+Sem `secoes`, valem as de tecnologia (Inovações, Design com IA, Quem fez e deu certo, Vozes do ramo, Classificados).
+Cada edição guarda as seções com que foi feita, então mudar o config não bagunça as edições antigas.
+
+### 5. Detalhes da página
 
 | Campo | O que faz |
 |---|---|
 | `cidade` | aparece no cabeçalho, ao lado da data (vazio, some) |
 | `neuroos` | `true` mostra o botão "Salvar no NeuroOS" (o segundo cérebro do autor). Desligado por padrão: todo mundo tem o bloco de notas |
 
-### 5. De onde vêm as notícias (`fontes`)
+### 6. De onde vêm as notícias (`fontes`)
 
 As fontes dependem da pessoa: um dono de restaurante, uma advogada e um programador leem lugares bem diferentes.
 

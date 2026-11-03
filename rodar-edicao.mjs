@@ -57,7 +57,14 @@ function prompt(erros, viaApi) {
     'Regra inegociável: toda fonte_url veio da coleta ou de uma página que você abriu. Nunca invente link, data ou número.',
   ];
   const t = TAMANHOS[cfg.edicao.tamanho];
-  if (t && cfg.edicao.tamanho !== 'completa') {
+  if (cfg.secoes) {
+    // seções da pessoa no lugar das de tecnologia: o "categoria" de cada matéria é o id da seção
+    base.push('Seções desta edição (valem no lugar das seções da skill; use o id no campo "categoria" de cada matéria):\n' +
+      cfg.secoes.map((s) => `- ${s.id}: ${s.nome} — ${s.sub}`).join('\n'));
+    base.push(`Tamanho: ${t.total} matérias no total, divididas entre as seções conforme a importância para o leitor. Escolha só as melhores.`);
+    base.push('Sem "classificados" nem "grupo", a não ser que exista uma seção com id "classificados". "teste_do_dia" é opcional: ' +
+      'se usar, ponha "rotulo": "Para testar hoje" e passos que o leitor faz sozinho.');
+  } else if (t && cfg.edicao.tamanho !== 'completa') {
     base.push(`Tamanho desta edição: "${cfg.edicao.tamanho}", ${t.total} matérias no total (vale no lugar das quantidades da skill): ` +
       `inovacoes ${t.inovacoes}, design ${t.design}, resultados ${t.resultados}, vozes ${t.vozes}, classificados ${t.classificados}. Escolha só as melhores.`);
   }
@@ -68,6 +75,19 @@ function prompt(erros, viaApi) {
   }
   if (erros) base.push(`A validação anterior falhou com estes erros; corrija ${viaApi ? 'a edição' : `o arquivo ${arquivo}`}:\n${erros}`);
   return base.join('\n');
+}
+
+// a edição leva as próprias seções e o nome do caderno: se o config mudar depois, as antigas continuam abrindo certo
+function carimbarSecoes(arq) {
+  if (!cfg.secoes && !cfg.caderno) return;
+  try {
+    const ed = JSON.parse(fs.readFileSync(arq, 'utf-8'));
+    if (cfg.secoes) ed.secoes = cfg.secoes;
+    if (cfg.caderno) ed.caderno = cfg.caderno;
+    fs.writeFileSync(arq, JSON.stringify(ed, null, 2) + '\n', 'utf-8');
+  } catch {
+    // JSON quebrado: o validador aponta o erro e a IA corrige na próxima tentativa
+  }
 }
 
 // coleta em uma linha por item: cabe no contexto de modelos sem ferramentas
@@ -119,6 +139,7 @@ async function main() {
     log(`IA saiu com código ${r.code}: ${r.out.slice(-600)}`);
 
     if (!fs.existsSync(path.join(ROOT, arquivo))) { erros = `O arquivo ${arquivo} não foi criado.`; continue; }
+    carimbarSecoes(path.join(ROOT, arquivo));
     const val = await rodar(process.execPath, ['validar.mjs', arquivo], { timeoutMs: 5 * 60_000 });
     if (val.code === 0) { log(`Validação OK. ${val.out.split('\n').pop()}`); return; }
     erros = val.out.split('\n').filter((l) => l.includes('[ERRO]')).slice(0, 40).join('\n') || val.out.slice(-2000);

@@ -75,6 +75,9 @@ function mesclar(novas, substituir = false) {
   cfg.fontes = { rss: [], google_noticias: [], github_buscas: [], github_releases: [], hacker_news: [], ...cfg.fontes };
   if (substituir) {
     for (const campo of ['rss', 'google_noticias', 'github_buscas', 'github_releases', 'hacker_news']) cfg.fontes[campo] = [];
+    // jornal novo para a pessoa: as seções e o caderno vêm junto com as fontes
+    if (novas.secoes?.length) cfg.secoes = novas.secoes;
+    if (novas.caderno) cfg.caderno = novas.caderno;
   }
   // trending do GitHub e Hugging Face seguem o que a busca concluiu sobre a pessoa
   if (typeof novas.tecnologia === 'boolean' && (substituir || novas.tecnologia)) {
@@ -140,13 +143,17 @@ async function descobrir() {
     '- "tecnologia": true só se a pessoa trabalha com software/tecnologia e quer GitHub e Hacker News; senão false.',
     '- Só se "tecnologia" for true: "github_buscas" (sintaxe da busca do GitHub), "github_releases" ("dono/nome" de',
     '  ferramentas que ela usa) e "hacker_news" (palavras em inglês). Senão, listas vazias.',
+    '- "caderno": nome curto do jornal dessa pessoa, como o caderno de um jornal impresso (ex.: "Caderno de Food Service").',
+    '- "secoes": 4 a 6 seções do jornal pensadas para ela, na ordem de importância. Cada uma: "id" (minúsculas, sem',
+    '  acento nem espaço, ex.: "mercado"), "nome" (ex.: "Mercado e delivery") e "sub" (uma frase dizendo o que entra).',
+    '  Uma boa seção para quase todo mundo: casos reais de quem fez e deu certo, com número. Não use id "classificados".',
     'LinkedIn, Instagram, Facebook, X e TikTok não têm feed aberto: não ponha esses links. Se uma pessoa ou empresa',
     'importante só publica lá, procure o blog, a newsletter ou o canal do YouTube dela.',
     `"tipo" de cada feed, um destes: ${TIPOS.join(', ')}. "idioma": "pt", "en", "es"...`,
     'Só sites que existem de verdade. Se não tiver certeza do endereço exato do feed, ponha o endereço do site em "url": o script procura o feed na página e descarta o que não funcionar.',
     jaTem ? `Já estão no jornal (não repita):\n${jaTem}` : '',
     'Formato, só este JSON:',
-    '{"rss":[{"nome":"","url":"","tipo":"","idioma":""}],"google_noticias":[],"tecnologia":false,"github_buscas":[],"github_releases":[],"hacker_news":[]}',
+    '{"caderno":"","secoes":[{"id":"","nome":"","sub":""}],"rss":[{"nome":"","url":"","tipo":"","idioma":""}],"google_noticias":[],"tecnologia":false,"github_buscas":[],"github_releases":[],"hacker_news":[]}',
     VIA_API ? 'Responda só com o JSON, sem texto antes ou depois.'
       : `Abra os sites para confirmar os endereços. Escreva o resultado em ${SUGERIDAS} e não altere nenhum outro arquivo.`,
   ].filter(Boolean).join('\n');
@@ -161,7 +168,11 @@ async function descobrir() {
 
   // confere tudo: feed que não abre, busca sem notícia e repositório que não existe ficam de fora
   const tec = sugeridas.tecnologia === true;
-  const aprovadas = { rss: [], google_noticias: [], tecnologia: tec, github_buscas: tec ? sugeridas.github_buscas || [] : [], github_releases: [], hacker_news: tec ? sugeridas.hacker_news || [] : [] };
+  const idValido = (id) => typeof id === 'string' && /^[a-z0-9_-]{2,30}$/.test(id) && id !== 'classificados';
+  const secoes = (sugeridas.secoes || []).filter((s) => idValido(s?.id) && s.nome).slice(0, 6)
+    .map((s) => ({ id: s.id, nome: String(s.nome).slice(0, 40), sub: String(s.sub || '').slice(0, 120) }));
+  if (secoes.length) console.log(`  ${sugeridas.caderno || 'Seções'}: ${secoes.map((s) => s.nome).join(' · ')}`);
+  const aprovadas = { caderno: String(sugeridas.caderno || '').slice(0, 60), secoes, rss: [], google_noticias: [], tecnologia: tec, github_buscas: tec ? sugeridas.github_buscas || [] : [], github_releases: [], hacker_news: tec ? sugeridas.hacker_news || [] : [] };
   for (const termo of sugeridas.google_noticias || []) {
     const r = await baixar(googleNoticias(termo)).then(({ texto }) => contarItens(texto), () => 0);
     console.log(`  ${r ? '✓' : '✗'} Google Notícias: "${termo}"${r ? ` (${r} notícias na semana)` : ': nada encontrado'}`);
@@ -195,6 +206,8 @@ function aplicar() {
   fs.rmSync(arq);
   console.log(`${args.includes('--substituir') ? 'Fontes trocadas' : 'Entraram no config.json'}: ${c.rss} feeds, ${c.google_noticias} buscas no Google Notícias, ` +
     `${c.github_buscas} buscas do GitHub, ${c.github_releases} repositórios de releases, ${c.hacker_news} palavras do HN.`);
+  const cfg = lerConfigPessoal();
+  if (args.includes('--substituir') && cfg.secoes) console.log(`Seções do jornal: ${cfg.secoes.map((s) => s.nome).join(' · ')}`);
 }
 
 async function testar() {

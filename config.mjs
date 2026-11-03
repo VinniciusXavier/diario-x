@@ -15,6 +15,9 @@ export function carregarConfig() {
   cfg.edicao = { tamanho: 'completa', ...cfg.edicao };
   cfg.neuroos = cfg.neuroos === true; // botão "Salvar no NeuroOS": só para quem tem o NeuroOS
   cfg.cidade = cfg.cidade || '';
+  // seções e nome do caderno: sem elas, valem as seções de tecnologia da skill
+  cfg.secoes = Array.isArray(cfg.secoes) && cfg.secoes.length ? cfg.secoes : null;
+  cfg.caderno = cfg.caderno || '';
   cfg.fontes = { rss: [], google_noticias: [], github_buscas: [], github_releases: [], hacker_news: [], github_trending: true, hugging_face: true, ...cfg.fontes };
   return cfg;
 }

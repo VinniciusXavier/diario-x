@@ -140,6 +140,14 @@ async function main() {
     }
   }
 
+  // edição com seções próprias (perfil fora de tecnologia) aceita só os ids delas
+  const categoriasValidas = Array.isArray(edicao.secoes) && edicao.secoes.length
+    ? new Set(edicao.secoes.map((s) => s.id))
+    : CATEGORIAS_VALIDAS;
+  if (Array.isArray(edicao.secoes) && edicao.secoes.some((s) => !s?.id || !s?.nome)) {
+    erros.push('Campo "secoes": cada seção precisa de "id" e "nome"');
+  }
+
   const ids = new Set();
   const urls = new Set();
   const urlsParaTestar = [];
@@ -157,7 +165,7 @@ async function main() {
       ids.add(item.id);
     }
 
-    if (item.categoria && !CATEGORIAS_VALIDAS.has(item.categoria)) {
+    if (item.categoria && !categoriasValidas.has(item.categoria)) {
       erros.push(`${prefix}: categoria inválida "${item.categoria}"`);
     }
 

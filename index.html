@@ -32,7 +32,7 @@
     --sans: "Manrope", system-ui, sans-serif;
 
     /* escala por papel */
-    --t-manchete: clamp(2.3rem, 5vw, 4.25rem);
+    --t-manchete: clamp(2.3rem, 4.8vw, 6rem);  /* cresce com a tela larga para a manchete ocupar a largura */
     --t-secao: 1.75rem;
     --t-titulo: 1.3125rem;
     --t-texto: 1.0625rem;
@@ -73,12 +73,12 @@
   h3.titulo a:hover { text-decoration: underline; }
   .resumo { margin: 0; color: var(--ink-2); text-wrap: pretty; }
 
-  /* a folha de jornal sobre a mesa */
+  /* a folha de jornal ocupa a tela toda; --gutter é a margem interna, que a barra fixa também usa */
   .sheet {
-    position: relative; max-width: 1180px; margin: 1.5rem auto 3rem; padding: 0 3rem 2.5rem;
+    --gutter: clamp(1rem, 4vw, 4.5rem);
+    position: relative; min-height: 100vh; margin: 0; padding: 0 var(--gutter) 2.5rem;
     background-color: var(--paper);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .15 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    box-shadow: 0 30px 80px -20px #000a;
   }
 
   /* ── Cabeçalho ── */
@@ -91,7 +91,7 @@
   .dateline .rotulo { color: var(--ink); }
 
   /* ── Barra (sólida, sem vidro) ── */
-  .bar { position: sticky; top: 0; z-index: 20; margin: 0 -3rem; padding: .6rem 3rem; background: var(--paper); border-bottom: 1px solid var(--rule); }
+  .bar { position: sticky; top: 0; z-index: 20; margin: 0 calc(-1 * var(--gutter)); padding: .6rem var(--gutter); background: var(--paper); border-bottom: 1px solid var(--rule); }
   .bar-in { display: flex; align-items: center; gap: 1.2rem; }
   .seg { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1.5px solid var(--rule-strong); padding: 2px; border-radius: 999px; flex: none; }
   .seg button { position: relative; z-index: 1; border: 0; background: none; color: var(--ink); cursor: pointer; font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; padding: .7rem 1rem; border-radius: 999px; min-width: 5.8rem; transition: color 240ms var(--ease); }
@@ -132,7 +132,7 @@
   /* ── Primeira página ── */
   .front { padding: 2.6rem 0 2.8rem; }
   .stamp { display: block; width: max-content; margin: 0 auto; font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--accent-text); border: 1.5px solid currentColor; padding: .4rem .5rem .4rem .75rem; transform: rotate(-2deg); }
-  .banner { margin: 1.1rem auto .6rem; max-width: 21ch; text-align: center; font: 700 var(--t-manchete)/1.03 var(--serif); letter-spacing: -.025em; text-wrap: balance; }
+  .banner { margin: 1.1rem auto 1.1rem; max-width: none; /* a manchete corre de margem a margem, como no jornal impresso */ text-align: center; font: 700 var(--t-manchete)/1.03 var(--serif); letter-spacing: -.025em; text-wrap: balance; }
   .banner a { text-decoration: none; }
   .front .byline { text-align: center; margin-bottom: 2.4rem; }
   .front-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 3rem; align-items: start; }
@@ -221,14 +221,13 @@
   }
 
   @media (max-width: 1000px) {
-    .sheet { padding: 0 2rem 2rem; }
-    .bar { margin: 0 -2rem; padding: .6rem 2rem; }
+    .sheet { --gutter: 2rem; padding-bottom: 2rem; }
     .front-grid, .feature, .teste { grid-template-columns: 1fr; gap: 1.8rem; }
     .cards, .ads { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 640px) {
-    .sheet { margin: 0; padding: 0 1rem 1.5rem; box-shadow: none; }
-    .bar { margin: 0 -1rem; padding: .5rem 1rem; }
+    .sheet { --gutter: 1rem; padding-bottom: 1.5rem; }
+    .bar { padding-block: .5rem; }
     .bar-in { gap: .5rem .6rem; flex-wrap: wrap; }
     .cats { display: none; }                 /* o "Dia em 1 minuto" faz esse papel no celular */
     .seg { flex: 1 1 100%; }                 /* linha própria: dividindo com o seletor, "Semana" não cabia no terço */
@@ -308,7 +307,7 @@
   <header>
     <div class="strip rotulo">
       <span id="vol">Vol. I</span>
-      <span class="c">Caderno de Inteligência Artificial</span>
+      <span class="c" id="caderno">Caderno de Inteligência Artificial</span>
       <span>Preço: um café</span>
     </div>
     <div class="title">
@@ -492,9 +491,19 @@ async function abrir(data) {
 }
 
 /* Hoje = a edição do dia inteira; Semana e Mês somam as edições anteriores */
+const datasDoPeriodo = () => [...state.edicoes.keys()].filter((d) => d <= state.sel && diasEntre(state.sel, d) <= JANELA[state.periodo]).sort().reverse();
+// cada edição traz as próprias seções (o jornal muda conforme a pessoa); edição sem "secoes" usa as de tecnologia
+function secoesDoPeriodo() {
+  const vistos = new Set(), out = [];
+  for (const d of datasDoPeriodo()) {
+    const ed = state.edicoes.get(d); if (!ed) continue;
+    for (const s of ed.secoes || CATS) if (!vistos.has(s.id)) { vistos.add(s.id); out.push({ sub: '', ...s }); }
+  }
+  return out;
+}
 function itensDoPeriodo() {
-  const ref = state.sel, lim = JANELA[state.periodo], vistos = new Set(), out = [];
-  for (const d of [...state.edicoes.keys()].filter((d) => d <= ref && diasEntre(ref, d) <= lim).sort().reverse()) {
+  const vistos = new Set(), out = [];
+  for (const d of datasDoPeriodo()) {
     const ed = state.edicoes.get(d); if (!ed) continue;
     for (const it of ed.itens) {
       if (vistos.has(it.fonte_url)) continue;
@@ -572,9 +581,10 @@ function testeDoDia(ed, itens) {
   if (!it) return '';
   let [nome, oque] = it.titulo.split(' — ');
   if (oque) oque = oque[0].toUpperCase() + oque.slice(1);
-  return `<section class="teste" aria-label="Skill para testar hoje">
+  const rotulo = t.rotulo || 'Skill para testar hoje';
+  return `<section class="teste" aria-label="${esc(rotulo)}">
     <div>
-      <span class="rotulo">Skill para testar hoje</span>
+      <span class="rotulo">${esc(rotulo)}</span>
       <h2><a href="${esc(it.fonte_url)}" target="_blank" rel="noopener">${esc(nome)}</a></h2>
       <p class="resumo">${esc(oque || it.resumo)}</p>
       <p class="rotulo tempo">Cerca de 30 minutos</p>
@@ -594,17 +604,19 @@ function render() {
   const lead = ed && ed.itens.find((x) => x.id === ed.manchete);
   const resto = itens.filter((x) => !lead || x.fonte_url !== lead.fonte_url);
   const daCat = (c) => resto.filter((x) => x.cat === c);
+  const secoes = secoesDoPeriodo();
 
   $('#vol').textContent = `Vol. I · Nº ${meta.numero}`;
+  $('#caderno').textContent = ed?.caderno || 'Caderno de Inteligência Artificial';
   $('#dateline').textContent = dataLonga(state.sel);
   $('#ed-select').value = state.sel;
   document.title = `Diário X · ${state.sel.slice(8)}/${state.sel.slice(5, 7)}`;
   $('#leitura').textContent = `${resto.length + (lead ? 1 : 0)} matérias`;
-  $('#cats').innerHTML = CATS.map((c) => daCat(c.id).length ? `<a href="#${c.id}">${c.nome}<b>${daCat(c.id).length}</b></a>` : '').join('');
+  $('#cats').innerHTML = secoes.map((c) => daCat(c.id).length ? `<a href="#${c.id}">${c.nome}<b>${daCat(c.id).length}</b></a>` : '').join('');
 
   let html = '';
   if (lead) {
-    const minuto = CATS.filter((c) => c.id !== 'classificados').map((c) => ({ c, x: daCat(c.id)[0] })).filter((m) => m.x);
+    const minuto = secoes.filter((c) => c.id !== 'classificados').map((c) => ({ c, x: daCat(c.id)[0] })).filter((m) => m.x);
     const nAds = daCat('classificados').length;
     html += `<section class="front">
       <span class="stamp rise" style="--i:0">Manchete</span>
@@ -630,7 +642,7 @@ function render() {
     ${state.periodo === '24h' ? testeDoDia(ed, itens) : ''}`;
   }
 
-  for (const c of CATS) {
+  for (const c of secoes) {
     const lista = daCat(c.id);
     if (!lista.length) continue;
     let corpo;
@@ -807,7 +819,8 @@ const IA_DICA = {
   comando: 'Outro CLI: defina "comando" e "args" direto no config.json.',
 };
 const IA_NOME = { antigravity: 'Antigravity', claude: 'Claude Code', gemini: 'Gemini CLI', codex: 'Codex', api: 'API (OpenAI, OpenRouter, Ollama…)', comando: 'Outro comando' };
-const resumoFontes = (c) => `${c.feeds} feeds${c.buscas ? ` e ${c.buscas} buscas no Google Notícias` : ''} no jornal agora.`;
+const resumoFontes = (c) => `${c.feeds} feeds${c.buscas ? ` e ${c.buscas} buscas no Google Notícias` : ''} no jornal agora.`
+  + (c.secoes?.length ? ` Seções: ${c.secoes.join(' · ')}.` : '');
 function preencherAjustes() {
   const c = state.cfg;
   $('#aj-leitor').value = c.leitor;
