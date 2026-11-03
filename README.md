@@ -1,253 +1,214 @@
 <div align="center">
 
-<img src="assets/logo-dx-512.png" alt="Diário X" width="120">
-
-# Diário X
-
-**O que muda o seu dia, com a fonte na mão.**
-
-Um jornal pessoal de IA que roda no seu PC. Toda manhã um agente lê RSS, GitHub, Hugging Face e Hacker News,
-escreve de 45 a 55 matérias em português e entrega uma edição com cara de jornal impresso.
-Cada matéria traz o link da fonte e um "pra você": o que fazer com aquilo hoje.
+<img src="docs/img/banner.png" alt="Diário X: um jornal escrito por IA só para você, sobre o assunto que você quiser">
 
 ![Node 18+](https://img.shields.io/badge/node-18%2B-1c1a16?style=flat-square&labelColor=e8dcc4)
 ![Sem dependências](https://img.shields.io/badge/depend%C3%AAncias-zero-1c1a16?style=flat-square&labelColor=e8dcc4)
-![Windows](https://img.shields.io/badge/agendamento-Windows-1c1a16?style=flat-square&labelColor=e8dcc4)
 ![Português](https://img.shields.io/badge/idioma-pt--BR-1c1a16?style=flat-square&labelColor=e8dcc4)
+![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-1c1a16?style=flat-square&labelColor=e8dcc4)
+
+**Toda manhã, uma edição nova: as notícias do seu mundo, com a fonte em cada matéria<br>e um "pra você" dizendo o que fazer com aquilo hoje.**
+
+[Começar](#começar-em-3-passos) · [Como funciona](#como-funciona) · [Configurar](#configurar)
 
 </div>
 
-![Capa da edição do dia](docs/img/capa.png)
+<br>
 
-## O que tem em cada edição
+## O mesmo jornal, pessoas diferentes
 
-| Seção | O que entra |
-|---|---|
-| **Manchete** | a notícia que mais muda o seu trabalho no dia |
-| **O dia em 1 minuto** | uma linha por seção, para ler no café |
-| **Inovações** | modelos novos, versões e correções de ferramentas |
-| **Design com IA** | Awwwards, sites premiados e como estão sendo feitos |
-| **Quem fez e deu certo** | resultados reais, com número |
-| **Vozes do ramo** | especialistas de fora traduzidos (Simon Willison, Akita, Zenn…) |
-| **Classificados** | repositórios do GitHub em alta, separados por tipo |
-| **Skill para testar hoje** | uma skill com passo a passo de ~30 minutos |
-| **Palavra do editor** | o fio que liga as matérias do dia |
-
-Regra de ouro: **nada inventado.** Sem URL verificada, a matéria não entra. O `validar.mjs` confere formato,
-links e repetição antes de a edição ir ao ar.
+Você conta quem é e o que quer ler. A IA escolhe as fontes, cria as seções e escreve a edição.
 
 <table>
 <tr>
-<td width="62%"><img src="docs/img/edicao.png" alt="Edição completa no desktop"></td>
-<td width="38%" valign="top"><img src="docs/img/mobile.png" alt="Diário X no celular"></td>
+<td width="50%"><img src="docs/img/capa.png" alt="Edição para quem trabalha com tecnologia e design"></td>
+<td width="50%"><img src="docs/img/exemplo-pizzaria.png" alt="Edição para a dona de uma pizzaria em Belo Horizonte"></td>
 </tr>
 <tr>
-<td align="center"><sub>Manchete, resumo do dia, palavra do editor e skill do dia</sub></td>
-<td align="center"><sub>No celular</sub></td>
+<td align="center"><b>Designer que usa IA</b><br><sub>Inovações · Design com IA · Vozes do ramo · Repositórios em alta</sub></td>
+<td align="center"><b>Dona de pizzaria em BH</b><br><sub>Delivery & Food Service · Marketing · IA para pequeno negócio · BH & Região</sub></td>
 </tr>
 </table>
+
+## Por que é diferente
+
+|   |   |
+|---|---|
+| 📰 **É um jornal, não um feed** | Manchete, "o dia em 1 minuto", palavra do editor e seções. Cabe no café da manhã. |
+| 🔗 **Nada inventado** | Toda matéria tem link para a fonte. Um validador confere cada link antes da edição sair. |
+| 🎯 **Escrito para você** | Cada matéria traz um "pra você": o que aquilo muda no seu dia, numa ação pequena. |
+| 🤖 **Usa a IA que você já tem** | Claude Code, Gemini CLI, Codex, Antigravity, qualquer API compatível com a OpenAI ou o Ollama no seu PC. |
+| 🏠 **Roda no seu computador** | Sem conta, sem servidor, sem dependências. Só Node. |
+
+## Começar em 3 passos
+
+```bash
+git clone https://github.com/VinniciusXavier/diario-x.git && cd diario-x
+```
+
+```bash
+node server.mjs
+```
+
+Abra **http://127.0.0.1:51810**. Na primeira vez o painel **Configurar** abre sozinho: escreva seus interesses,
+escolha o tamanho e a IA, clique em **Procurar com a IA** e depois em **Usar as fontes aprovadas**.
+
+<img src="docs/img/configurar.png" alt="Painel Configurar" width="100%">
+
+Para montar a edição de hoje:
+
+```bash
+node rodar-edicao.mjs
+```
+
+> No Windows, `.\instalar-agendamento.ps1` deixa a edição pronta todo dia às 09:00 e quando o PC liga.
 
 ## Como funciona
 
 ```mermaid
 flowchart LR
-    A[09:00 ou ao ligar o PC] --> B[coletar.mjs<br/>RSS · GitHub · HF · HN]
-    B --> C[IA escolhida no config<br/>Antigravity · Claude · Gemini · Codex · API]
-    C --> D[validar.mjs<br/>formato · links · fotos]
-    D -->|falhou| C
-    D --> E[edicoes/AAAA-MM-DD.json]
-    E --> F[index.html<br/>Hoje · Semana · Mês]
+    A[Suas fontes<br/>portais · sites do setor · YouTube<br/>newsletters · Google Notícias] --> B[Coleta<br/>sem IA]
+    B --> C[A sua IA<br/>escolhe e escreve]
+    C --> D[Validador<br/>confere cada link]
+    D -->|achou erro| C
+    D --> E[Edição do dia<br/>Hoje · Semana · Mês]
 ```
 
-A coleta não usa IA: só busca e organiza as fontes que você escolheu. A IA escolhe, escreve e liga cada item à rotina do leitor.
-Se a validação falhar, ela recebe os erros e tenta de novo (até 3 vezes).
-
-## Rodar
-
-Para **ler** o jornal basta o Node 18+, sem dependências: as edições já publicadas vêm no repositório.
-Para **gerar edições novas** você precisa de uma IA: a que você já usa serve (veja [Configurar](#configurar)).
-
-```bash
-git clone https://github.com/VinniciusXavier/diario-x.git
-cd diario-x
-```
-
-```bash
-node server.mjs          # abre em http://127.0.0.1:51810 (ou dois cliques no Diario-X.bat)
-```
-
-Na primeira vez o painel **Configurar** abre sozinho: você conta o que quer ler, escolhe o tamanho da edição, a IA e as
-fontes. Dá para reabrir pelo botão de ajustes, ao lado do bloco de notas.
-
-Montar a edição de hoje na mão:
-
-```bash
-node rodar-edicao.mjs              # coleta → IA escreve → valida
-node rodar-edicao.mjs --simular    # só mostra qual IA e comando vai usar
-```
-
-Agendar todo dia às 09:00 e ao ligar o PC (Windows, PowerShell):
-
-```powershell
-.\instalar-agendamento.ps1
-```
-
-### Variáveis opcionais
-
-| Variável | Para que serve |
-|---|---|
-| `DIARIO_PORT` | porta do servidor (padrão `51810`) |
-| `DIARIO_MODELO` | troca o modelo do config só nesta execução |
-| `NEUROOS_INBOX` | com `"neuroos": true`, pasta onde o "Salvar no NeuroOS" grava `diario-x.jsonl` (padrão `~/NeuroOS/brain/inbox`) |
-| `GITHUB_TOKEN` | aumenta o limite da API do GitHub na coleta |
+A coleta só busca e organiza: não gasta IA. A IA escolhe as melhores matérias, escreve em português e liga cada uma
+à sua rotina. Se o validador achar um problema, ela recebe a lista de erros e corrige, até 3 vezes.
 
 ## Configurar
 
-Tudo o que muda de pessoa para pessoa fica no `config.json` (fora do Git; o modelo é o
-[`config.exemplo.json`](config.exemplo.json)). O jeito fácil é pelo próprio jornal:
+Tudo pode ser feito pelo painel do jornal. Quem preferir edita o `config.json` (o modelo é o
+[`config.exemplo.json`](config.exemplo.json)).
 
-![Painel Configurar](docs/img/configurar.png)
+<details>
+<summary><b>Qual IA monta a edição</b></summary>
 
-O painel grava no `config.json`. Quem preferir edita o arquivo direto; são estas partes:
-
-### 1. Qual IA monta a edição (`ia`)
+<br>
 
 | `provedor` | Precisa de | Abre páginas sozinha? |
 |---|---|---|
 | `antigravity` | CLI `agy` instalado e logado | sim |
-| `claude` | [Claude Code](https://claude.com/claude-code) (`claude`) logado | sim |
-| `gemini` | [Gemini CLI](https://github.com/google-gemini/gemini-cli) (`gemini`) logado | sim |
-| `codex` | [Codex CLI](https://github.com/openai/codex) (`codex`) logado | sim |
-| `api` | qualquer API no formato da OpenAI: OpenAI, OpenRouter, Groq, DeepSeek, Ollama local… | não, usa só a coleta |
-| `comando` | qualquer outro CLI: você diz o comando e os argumentos | depende do CLI |
+| `claude` | [Claude Code](https://claude.com/claude-code) logado | sim |
+| `gemini` | [Gemini CLI](https://github.com/google-gemini/gemini-cli) logado | sim |
+| `codex` | [Codex CLI](https://github.com/openai/codex) logado | sim |
+| `api` | qualquer API no formato da OpenAI: OpenAI, OpenRouter, Groq, DeepSeek, Ollama… | não, usa só a coleta |
+| `comando` | qualquer outro CLI | depende do CLI |
 
 ```jsonc
-// Claude Code
 "ia": { "provedor": "claude", "modelo": "claude-sonnet-5-5" }
 
-// API (a chave fica numa variável de ambiente, nunca no arquivo)
+// a chave fica numa variável de ambiente, nunca no arquivo
 "ia": { "provedor": "api", "modelo": "gpt-5", "api": { "url": "https://api.openai.com/v1", "chave_env": "OPENAI_API_KEY" } }
 
-// Ollama local, sem chave
+// Ollama no seu PC, sem chave
 "ia": { "provedor": "api", "modelo": "qwen3:32b", "api": { "url": "http://localhost:11434/v1" } }
 
 // outro CLI: {pedido}, {modelo} e {pasta_skill} são trocados na hora
 "ia": { "provedor": "comando", "comando": "meu-agente", "args": ["--model", "{modelo}", "{pedido}"] }
 ```
 
-`modelo` vazio usa o padrão da própria IA. Com `api` a IA não navega: a coleta vai inteira na mensagem, então
-use um modelo com contexto de pelo menos 64 mil tokens.
+Com `api` a IA não navega: a coleta vai inteira na mensagem, então use um modelo com pelo menos 64 mil tokens de contexto.
+Para conferir sem gastar nada: `node rodar-edicao.mjs --simular`.
 
-### 2. Para quem o jornal escreve (`leitor`)
+</details>
 
-Um parágrafo sobre você: profissão, ferramentas, projetos, o que quer e o que não quer ler. É daí que sai o "pra você"
-de cada matéria. Vazio, vale o **Perfil do leitor** de `docs/SKILL-diario-x.md`.
+<details>
+<summary><b>Para quem o jornal escreve e quantas notícias</b></summary>
 
-### 3. Quantas notícias (`edicao.tamanho`)
+<br>
 
-| Tamanho | Matérias por edição |
-|---|---|
-| `enxuta` | 15 a 20 |
-| `normal` | 25 a 35 (padrão do exemplo) |
-| `completa` | 45 a 55 |
+- **`leitor`**: um parágrafo sobre você (profissão, ferramentas, cidade, o que quer e o que não quer ler). É daí que
+  sai o "pra você".
+- **`edicao.tamanho`**: `enxuta` (15 a 20 matérias), `normal` (25 a 35) ou `completa` (45 a 55).
+- **`cidade`**: aparece no cabeçalho, ao lado da data.
 
-As seções continuam as mesmas; o que muda é quantas matérias entram em cada uma.
+</details>
 
-### 4. Seções e caderno (`secoes`, `caderno`)
+<details>
+<summary><b>Seções e caderno</b></summary>
 
-O jornal não é só de tecnologia. Quando a IA procura as fontes e você escolhe **trocar**, ela também monta as seções
-pensadas para você e o nome do caderno. Para a dona de uma pizzaria em BH, por exemplo, saiu:
+<br>
 
-> **Caderno de Food Service & Delivery** · Delivery & Food Service · Marketing & Redes Sociais ·
-> Casos Reais & Gestão · IA para Pequeno Negócio · Belo Horizonte & Região
-
-![Edição feita para uma pizzaria em BH](docs/img/exemplo-pizzaria.png)
+Quando a IA procura as fontes e você escolhe **trocar**, ela também cria as seções e o nome do caderno pensados para
+você. Cada edição guarda as seções com que foi feita, então mudar depois não bagunça as edições antigas.
 
 ```json
 "caderno": "Caderno de Food Service & Delivery",
 "secoes": [{ "id": "delivery", "nome": "Delivery & Food Service", "sub": "Mercado, apps e tendências do setor" }]
 ```
 
-Sem `secoes`, valem as de tecnologia (Inovações, Design com IA, Quem fez e deu certo, Vozes do ramo, Classificados).
-Cada edição guarda as seções com que foi feita, então mudar o config não bagunça as edições antigas.
+Sem `secoes`, valem as de tecnologia: Inovações, Design com IA, Quem fez e deu certo, Vozes do ramo e Classificados.
 
-### 5. Detalhes da página
+</details>
 
-| Campo | O que faz |
-|---|---|
-| `cidade` | aparece no cabeçalho, ao lado da data (vazio, some) |
-| `neuroos` | `true` mostra o botão "Salvar no NeuroOS" (o segundo cérebro do autor). Desligado por padrão: todo mundo tem o bloco de notas |
+<details>
+<summary><b>De onde vêm as notícias</b></summary>
 
-### 6. De onde vêm as notícias (`fontes`)
-
-As fontes dependem da pessoa: um dono de restaurante, uma advogada e um programador leem lugares bem diferentes.
+<br>
 
 | Campo | O que é |
 |---|---|
-| `rss` | qualquer feed: portais, sites do setor, blogs, newsletters (Substack, Medium), canais do YouTube, subreddits, podcasts. `{ "nome", "url", "tipo", "idioma"?, "dias"? }` |
-| `google_noticias` | buscas no Google Notícias, ex.: `"delivery de comida"`. Pega qualquer portal que falou do assunto na semana |
-| `github_buscas` / `github_releases` / `hacker_news` | para quem é de tecnologia: repositórios novos, versões de ferramentas e Hacker News |
-| `github_trending` / `hugging_face` | `true` ou `false` |
+| `rss` | qualquer feed: portais, sites do setor, blogs, newsletters (Substack, Medium), YouTube, subreddits, podcasts |
+| `google_noticias` | buscas no Google Notícias, ex.: `"delivery de comida"`; pega qualquer portal que falou disso na semana |
+| `github_buscas` · `github_releases` · `hacker_news` | para quem é de tecnologia |
+| `github_trending` · `hugging_face` | `true` ou `false` |
 
-LinkedIn, Instagram, Facebook, X e TikTok não oferecem feed aberto, então não entram direto. Quando alguém importante só
-publica lá, vale o blog, a newsletter ou o canal do YouTube da mesma pessoa ou empresa.
-
-As seções do jornal continuam as mesmas; o que entra em cada uma muda junto com as fontes e o perfil.
-
-#### Sem editar JSON na mão
+Pelo terminal:
 
 ```bash
-node fontes.mjs adicionar meioemensagem.com.br --tipo imprensa   # você sugere um site: o script acha o feed
+node fontes.mjs adicionar meioemensagem.com.br --tipo imprensa   # você sugere um site; o script acha o feed
 node fontes.mjs descobrir "tenho uma pizzaria delivery em BH"     # a IA procura onde alguém assim se informa
-node fontes.mjs aplicar --substituir                             # troca as fontes pelas aprovadas (sem a opção: soma)
+node fontes.mjs aplicar --substituir                             # troca as fontes (sem a opção: soma)
 node fontes.mjs testar                                           # mostra os feeds quebrados
 ```
 
-- **Você sugere:** passe o endereço do site. O script tenta o próprio link, o feed anunciado na página e os
-  caminhos de sempre (`/feed`, `/rss.xml`…). Só entra se abrir e tiver matérias.
-- **A IA procura:** primeiro entende a pessoa (profissão, mercado, cidade, idioma), depois monta uma mistura do que
-  faz sentido para ela: portais, sites do setor, especialistas, YouTube, newsletters, imprensa local e buscas no
-  Google Notícias. GitHub e Hacker News só entram para quem é de tecnologia. O script abre cada fonte e descarta o
-  que não funciona, então endereço inventado não passa. Sem tema, usa o `leitor` do config.
-- A lista aprovada fica em `coleta/fontes-verificadas.json` até você rodar `aplicar`: dá para olhar antes.
+Toda fonte é aberta e conferida antes de entrar: endereço inventado não passa. LinkedIn, Instagram, Facebook, X e
+TikTok não têm feed aberto; no lugar, vale o blog, a newsletter ou o YouTube da mesma pessoa ou empresa.
 
-## Recursos do leitor
+</details>
 
-- **Hoje / Semana / Mês:** a edição do dia ou a soma das anteriores
-- **Bloco de notas:** junta matérias e anotações enquanto lê; copia ou baixa em `.md`
-- **Configurar:** interesses, tamanho da edição, fontes e IA, sem abrir arquivo
-- **Salvar no NeuroOS** (só com `"neuroos": true`): manda a matéria para o segundo cérebro
-- **Tema claro e escuro**, navegação por teclado nas abas e edições anteriores pelo seletor de número
+<details>
+<summary><b>Variáveis de ambiente</b></summary>
 
-## Arquivos
+<br>
+
+| Variável | Para que serve |
+|---|---|
+| `DIARIO_PORT` | porta do servidor (padrão `51810`) |
+| `DIARIO_MODELO` | troca o modelo do config só nesta execução |
+| `GITHUB_TOKEN` | aumenta o limite da API do GitHub na coleta |
+| `NEUROOS_INBOX` | com `"neuroos": true`, pasta do botão "Salvar no NeuroOS" (o segundo cérebro do autor) |
+
+</details>
+
+<details>
+<summary><b>Arquivos do projeto</b></summary>
+
+<br>
 
 | Arquivo | O que faz |
 |---|---|
-| `config.exemplo.json` | modelo de configuração: IA, perfil do leitor e fontes |
-| `config.mjs` | lê o `config.json` (ou o exemplo) |
-| `ia.mjs` | chama a IA do config (agente ou API); usado pela edição e pela busca de fontes |
-| `fontes.mjs` | adiciona, descobre com IA e testa as fontes do config |
-| `coletar.mjs` | RSS, GitHub (busca, trending, releases), Hugging Face, HN, conforme as fontes do config; sem IA |
-| `rodar-edicao.mjs` | chama a IA do config, valida e tenta de novo, até 3 vezes |
-| `validar.mjs` | confere formato, links e repetição; preenche fotos; reescreve `edicoes/index.json` |
-| `server.mjs` | serve o site, grava o painel Configurar no `config.json` e roda a busca de fontes |
 | `index.html` | o jornal inteiro, num arquivo só |
-| `instalar-agendamento.ps1` | agenda `rodar-edicao.mjs` às 09:00 e ao ligar o PC |
-| `docs/SKILL-diario-x.md` | regras editoriais do agente: seções, quantidades, tom e formato |
-| `docs/PROMPT-ANTIGRAVITY.md` | prompt para rodar ou agendar a edição direto no Antigravity |
-| `edicoes/` | uma edição por dia, em JSON |
+| `server.mjs` | serve o jornal, grava o painel Configurar e roda a busca de fontes |
+| `coletar.mjs` | lê as fontes do config, sem IA |
+| `rodar-edicao.mjs` | chama a IA, valida e tenta de novo |
+| `validar.mjs` | confere formato e links, preenche as fotos e atualiza o índice |
+| `fontes.mjs` | adiciona, descobre com IA e testa fontes |
+| `ia.mjs` · `config.mjs` | falam com a IA e leem o `config.json` |
+| `docs/SKILL-diario-x.md` | regras editoriais: tom, formato e seções padrão |
+| `edicoes/` | uma edição por dia, em JSON (as que vêm no repositório são de exemplo) |
 
-## Adaptar para você
+</details>
 
-1. Rode `node server.mjs` e preencha o painel **Configurar** que abre sozinho: interesses, tamanho, IA e, em Fontes,
-   "Procurar com a IA" e depois "Usar as fontes aprovadas".
-2. Apague as edições de exemplo em `edicoes/` (deixe `index.json` como `{ "edicoes": [] }`) para começar do nº 1.
-3. Confira com `node rodar-edicao.mjs --simular`, rode `node rodar-edicao.mjs` uma vez e, se quiser, agende com
-   `instalar-agendamento.ps1`.
+## Começar do zero
 
-Para mudar as regras do jornal (seções, quantidades, tom), edite `docs/SKILL-diario-x.md`. Uma skill instalada em
-`~/.claude/skills/diario-x/SKILL.md` tem prioridade sobre ela.
+As edições que vêm no repositório são de exemplo. Para o seu jornal começar do nº 1, apague os arquivos de `edicoes/`
+e deixe o `index.json` como `{ "edicoes": [] }`.
 
 ---
 
-<div align="center"><sub>Feito por <a href="https://github.com/VinniciusXavier">Vinicius Xavier</a> · impresso pelo agente Diário X, toda manhã às 09:00</sub></div>
+<div align="center">
+<sub>Feito por <a href="https://github.com/VinniciusXavier">Vinicius Xavier</a>, designer. Gostou? Deixe uma ⭐ e mande para alguém que vive sem tempo de ler notícia.</sub>
+</div>
