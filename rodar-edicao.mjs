@@ -11,7 +11,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const AGY = [path.join(os.homedir(), 'AppData', 'Local', 'agy', 'bin', 'agy.exe'), 'agy'].find((p) => p === 'agy' || fs.existsSync(p));
 const MODELO = process.env.DIARIO_MODELO || 'gemini-3.8-flash-medium';
-const SKILL = path.join(os.homedir(), '.claude', 'skills', 'diario-x', 'SKILL.md');
+// a skill instalada no Claude Code tem prioridade; sem ela, vale a cópia do repositório
+const SKILL = [path.join(os.homedir(), '.claude', 'skills', 'diario-x', 'SKILL.md'), path.join(ROOT, 'docs', 'SKILL-diario-x.md')].find((p) => fs.existsSync(p));
 const TENTATIVAS = 3;
 
 const args = process.argv.slice(2);

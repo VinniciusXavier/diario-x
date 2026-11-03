@@ -64,7 +64,14 @@ Se a validação falhar, o agente tenta de novo (até 3 vezes).
 
 ## Rodar
 
-Node 18+, sem dependências.
+Para **ler** o jornal basta o Node 18+, sem dependências: as edições já publicadas vêm no repositório.
+Para **gerar edições novas** você precisa do Antigravity com o CLI `agy`
+instalado e logado (o modelo sai de `DIARIO_MODELO`, padrão `gemini-3.8-flash-medium`).
+
+```bash
+git clone https://github.com/VinniciusXavier/diario-x.git
+cd diario-x
+```
 
 ```bash
 node server.mjs          # abre em http://127.0.0.1:51810 (ou dois cliques no Diario-X.bat)
@@ -87,7 +94,8 @@ Agendar todo dia às 09:00 e ao ligar o PC (Windows, PowerShell):
 | Variável | Para que serve |
 |---|---|
 | `DIARIO_PORT` | porta do servidor (padrão `51810`) |
-| `NEUROOS_INBOX` | pasta onde o botão "Salvar" grava `diario-x.jsonl` |
+| `DIARIO_MODELO` | modelo usado pelo `agy` (padrão `gemini-3.8-flash-medium`) |
+| `NEUROOS_INBOX` | pasta onde o botão "Salvar" grava `diario-x.jsonl` (padrão `~/NeuroOS/brain/inbox`) |
 | `GITHUB_TOKEN` | aumenta o limite da API do GitHub na coleta |
 
 ## Recursos do leitor
@@ -116,6 +124,13 @@ Agendar todo dia às 09:00 e ao ligar o PC (Windows, PowerShell):
 O jornal é pessoal: o "pra você" de cada matéria sai do **Perfil do leitor** em
 [`docs/SKILL-diario-x.md`](docs/SKILL-diario-x.md). Troque esse perfil pelo seu (profissão, ferramentas,
 projetos) e as próximas edições passam a falar com você.
+
+1. Edite o **Perfil do leitor** em `docs/SKILL-diario-x.md`. O `rodar-edicao.mjs` usa esse arquivo, a não ser que
+   exista uma skill instalada em `~/.claude/skills/diario-x/SKILL.md`, que tem prioridade.
+2. Apague as edições de exemplo em `edicoes/` (deixe `index.json` como `{ "edicoes": [] }`) para começar do nº 1.
+3. Rode `node rodar-edicao.mjs` uma vez e, se quiser, agende com `instalar-agendamento.ps1`.
+
+Sem NeuroOS, o botão "Salvar" grava num arquivo `.jsonl` comum na pasta de `NEUROOS_INBOX`.
 
 ---
 

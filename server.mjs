@@ -1,12 +1,13 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 // Configurações principais
 const PORT = Number(process.env.DIARIO_PORT) || 51810;
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const INBOX_DIR = process.env.NEUROOS_INBOX || 'C:\\Users\\vinni\\NeuroOS\\brain\\inbox';
+const INBOX_DIR = process.env.NEUROOS_INBOX || path.join(os.homedir(), 'NeuroOS', 'brain', 'inbox');
 const INBOX_FILE = path.join(INBOX_DIR, 'diario-x.jsonl');
 
 // Garante que a pasta inbox exista no boot
