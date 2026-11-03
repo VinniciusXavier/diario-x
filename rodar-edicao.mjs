@@ -1,6 +1,7 @@
 // Monta a edição do dia com o Antigravity (agy CLI), sem depender da conta do Claude.
 // Uso: node rodar-edicao.mjs [--arquivo edicoes/teste.json] [--forcar]
-// Agendado no Windows (tarefa "Diario X - edicao") todo dia às 07:00.
+// Agendado no Windows (tarefa "Diario X - edicao"): todo dia às 09:00 e também ao ligar o PC.
+// Se a edição do dia já existe, não faz nada; então os dois gatilhos não duplicam.
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -54,6 +55,7 @@ function prompt(erros) {
     `Hoje é ${hoje}. A coleta de hoje já está pronta em coleta/${hoje}.json (não rode coletar.mjs de novo).`,
     'Nunca copie itens das edições anteriores em edicoes/: todo link precisa ser novo (o validador recusa repetidos).',
     `Escreva o arquivo ${arquivo} com "data": "${hoje}" e "numero": ${numeroDaEdicao()}.`,
+    'Campos que o validador exige e costumam faltar: toda matéria de "vozes" precisa de "idioma" ("pt", "en", "ja"...), e "titulo_original" quando o idioma não for "pt".',
     'Escolha os itens da coleta; para completar (Anthropic, Google, Awwwards) abra a página oficial. Todo texto em português do Brasil.',
     'Regra inegociável: toda fonte_url veio da coleta ou de uma página que você abriu. Nunca invente link, data ou número.',
     `Só escreva ${arquivo}: não altere nenhum outro arquivo e não rode comandos (a validação roda depois, fora de você).`,

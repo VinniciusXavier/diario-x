@@ -242,6 +242,47 @@
     .teste { padding: 1.3rem 1.2rem; }
     .src, .save { min-height: 42px; }
   }
+
+  /* ── Acabamento: o jornal ganha chapa de impressão ── */
+  .lead-text::first-letter { float: left; font: 400 4.6rem/.82 var(--logo); padding: .32rem .55rem 0 0; color: var(--accent-text); }
+  main { counter-reset: sec; }
+  .section { counter-increment: sec; }
+  .sec-head h2::before { content: "№ " counter(sec, decimal-leading-zero); display: block; margin-bottom: .35rem; font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .14em; color: var(--accent-text); }
+  .sec-head { align-items: flex-end; }
+  .pv { border-left: 3px solid var(--accent-solid); border-radius: 0 3px 3px 0; background: linear-gradient(90deg, color-mix(in srgb, var(--accent-solid) 9%, transparent), color-mix(in srgb, var(--paper-2) 70%, transparent) 70%); }
+  .cards > article { padding: 1.6rem 1.2rem 1.8rem; margin: 0 -1.2rem; border-bottom: 1px solid var(--rule); border-radius: 2px; transition: background 200ms var(--ease), box-shadow 200ms var(--ease); }
+  .cards > article:hover { background: color-mix(in srgb, var(--paper-2) 55%, transparent); box-shadow: inset 3px 0 0 var(--accent-solid); }
+  .ad { transition: transform 200ms var(--ease), box-shadow 200ms var(--ease); }
+  .ad:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--rule-strong); }
+  .banner a { background: linear-gradient(var(--accent-solid), var(--accent-solid)) 0 100% / 0 .09em no-repeat; transition: background-size 420ms var(--ease); }
+  .banner a:hover { background-size: 100% .09em; }
+  .byline::before { content: ""; display: inline-block; width: .55rem; height: 2px; background: var(--accent-solid); vertical-align: middle; margin-right: .45rem; }
+  .front .byline::before { display: none; }
+
+  /* ── Bloco de notas (gaveta) ── */
+  .note { display: inline-flex; align-items: center; gap: .35rem; min-height: 36px; cursor: pointer; font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .02em; padding: .55rem .85rem; border-radius: 999px; border: 1.5px dashed var(--rule-strong); background: transparent; color: var(--ink); transition: background 160ms var(--ease), color 160ms var(--ease), border-color 160ms var(--ease); }
+  .note:hover { border-style: solid; color: var(--accent-text); border-color: var(--accent-solid); }
+  .note[aria-pressed="true"] { border-style: solid; background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .icon-btn { position: relative; }
+  .icon-btn .badge { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--accent-solid); color: var(--on-accent); font: 700 .6875rem/18px var(--sans); text-align: center; }
+  .gaveta-fundo { position: fixed; inset: 0; z-index: 40; background: #0008; opacity: 0; pointer-events: none; transition: opacity 240ms var(--ease); }
+  .gaveta { position: fixed; top: 0; right: 0; bottom: 0; z-index: 41; width: min(440px, 100%); display: flex; flex-direction: column; background: var(--paper); border-left: 1.5px solid var(--rule-strong); box-shadow: -30px 0 60px -30px #000a; transform: translateX(104%); transition: transform 340ms var(--ease); }
+  body.gaveta-aberta .gaveta { transform: none; }
+  body.gaveta-aberta .gaveta-fundo { opacity: 1; pointer-events: auto; }
+  .gaveta header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; border-bottom: 4px double var(--rule-strong); }
+  .gaveta h2 { margin: 0; font: 400 1.9rem/1 var(--logo); }
+  .gaveta .corpo { flex: 1; overflow-y: auto; padding: 1rem 1.2rem 2rem; }
+  .gaveta textarea { width: 100%; min-height: 150px; resize: vertical; padding: .8rem; border: 1.5px solid var(--rule-strong); border-radius: 3px; background: color-mix(in srgb, var(--paper-2) 50%, transparent); color: var(--ink); font: 400 var(--t-texto)/1.55 var(--serif); }
+  .gaveta .acoes { display: flex; gap: .5rem; flex-wrap: wrap; margin: .7rem 0 1.4rem; }
+  .gaveta h3 { margin: 0 0 .6rem; }
+  .gaveta .guardado { padding: .8rem 0; border-bottom: 1px solid var(--rule); }
+  .gaveta .guardado a { font: 700 1.0625rem/1.3 var(--serif); text-decoration: none; }
+  .gaveta .guardado a:hover { text-decoration: underline; }
+  .gaveta .guardado .byline { margin: .2rem 0 .5rem; }
+  .gaveta .byline::before { display: none; }
+  .gaveta .vazio { color: var(--ink-2); font-style: italic; }
+  @media (prefers-reduced-motion: reduce) { .gaveta, .gaveta-fundo, .ad, .cards > article, .banner a { transition: none; } }
+  @media (max-width: 640px) { .cards > article { margin: 0; padding: 1.4rem 0 1.6rem; } }
 </style>
 </head>
 <body>
@@ -274,6 +315,10 @@
       <div class="cats" id="cats"></div>
       <div class="tools">
         <select class="ed-select" id="ed-select" aria-label="Escolher edição"></select>
+        <button class="icon-btn" id="bloco-btn" aria-label="Abrir o bloco de notas" aria-haspopup="dialog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 3h11l3 3v15H5z"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
+          <span class="badge" id="bloco-n" hidden>0</span>
+        </button>
         <button class="icon-btn" id="theme" aria-label="Alternar edição diurna e noturna">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
         </button>
@@ -284,11 +329,27 @@
   <main id="main"><div class="empty">Rodando as rotativas…</div></main>
 
   <footer class="rotulo">
-    <span>Impresso pelo agente Diário X · toda manhã, 07:00</span>
+    <span>Impresso pelo agente Diário X · toda manhã, 09:00</span>
     <span>Toda matéria traz o link da fonte</span>
   </footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="gaveta-fundo" id="gaveta-fundo"></div>
+<aside class="gaveta" id="gaveta" role="dialog" aria-modal="true" aria-labelledby="gaveta-t" aria-hidden="true" inert>
+  <header>
+    <h2 id="gaveta-t">Bloco de notas</h2>
+    <button class="icon-btn" id="gaveta-x" aria-label="Fechar o bloco de notas"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+  </header>
+  <div class="corpo">
+    <textarea id="nota-livre" placeholder="Escreva o que quiser lembrar. Salva sozinho, só neste navegador." aria-label="Anotações livres"></textarea>
+    <div class="acoes">
+      <button class="src" id="nota-copiar">Copiar tudo</button>
+      <button class="src" id="nota-baixar">Baixar .md</button>
+    </div>
+    <h3 class="rotulo" id="guardados-t">Matérias guardadas</h3>
+    <div id="guardados"></div>
+  </div>
+</aside>
 
 <script>
 const CATS = [
@@ -314,7 +375,7 @@ const JANELA = { '24h': 0, semana: 6, mes: 29 }; // dias de edições anteriores
 const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const DIAS = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 
-const state = { indice: [], edicoes: new Map(), sel: null, periodo: store('dx-aba') || '24h', abertos: new Set(), salvos: new Set() };
+const state = { bloco: lerBloco(), nota: store('dx-nota') || '', indice: [], edicoes: new Map(), sel: null, periodo: store('dx-aba') || '24h', abertos: new Set(), salvos: new Set() };
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const parseDia = (d) => new Date(d + 'T12:00:00');
@@ -324,6 +385,7 @@ const quando = (pub, ref) => { const n = diasEntre(ref, pub); return n <= 0 ? 'h
 const ICON_OUT = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
 const ICON_STAR = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.8 2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>';
 
+function lerBloco() { try { return JSON.parse(localStorage.getItem('dx-bloco') || '[]'); } catch { return []; } }
 function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch { return null; } }
 async function getJSON(url) { const r = await fetch(url, { cache: 'no-store' }); if (!r.ok) throw new Error(r.status); return r.json(); }
 
@@ -368,6 +430,8 @@ function botaoSalvar(it, principal = false) {
   return `<button class="save${principal ? ' principal' : ''}" data-url="${esc(it.fonte_url)}" data-state="${s ? 'saved' : ''}" ${s ? 'disabled' : ''}
     aria-label="${s ? 'Já salvo no NeuroOS' : 'Salvar no NeuroOS'}: ${esc(it.titulo)}">${s ? 'Salvo no NeuroOS' : 'Salvar no NeuroOS'}</button>`;
 }
+const noBloco = (url) => state.bloco.some((x) => x.fonte_url === url);
+const botaoNota = (url) => `<button class="note" data-nota="${esc(url)}" aria-pressed="${noBloco(url)}">${noBloco(url) ? '✓ No bloco' : '+ Bloco de notas'}</button>`;
 const fonte = (it) => `<a class="src" href="${esc(it.fonte_url)}" target="_blank" rel="noopener">Ler na fonte ${ICON_OUT}</a>`;
 let fotoN = 0;
 function foto(it, cls) {
@@ -506,10 +570,11 @@ function render() {
     html += `<section class="fim">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7.5 12.5 3 3 6-6.5"/></svg>
       <strong>Edição lida. Você está em dia.</strong>
-      <p>A próxima sai amanhã às 07:00.</p>
+      <p>A próxima sai amanhã às 09:00.</p>
     </section>`;
   } else html = '<div class="empty">Nada nesta janela ainda.</div>';
   $('#main').innerHTML = html;
+  document.querySelectorAll('#main .save').forEach((b) => b.insertAdjacentHTML('afterend', botaoNota(b.dataset.url)));
   posThumb();
 }
 
@@ -566,6 +631,19 @@ $('#main').addEventListener('click', async (e) => {
     primeiro?.querySelector('a')?.focus({ preventScroll: true });
     return;
   }
+  const n = e.target.closest('.note');
+  if (n) {
+    const url = n.dataset.nota;
+    if (noBloco(url)) state.bloco = state.bloco.filter((x) => x.fonte_url !== url);
+    else {
+      const it = itensDoPeriodo().find((x) => x.fonte_url === url);
+      if (it) state.bloco.unshift({ titulo: it.titulo, resumo: it.resumo, pra_voce: it.pra_voce, fonte_nome: it.fonte_nome, fonte_url: it.fonte_url, publicado_em: it.publicado_em, salvo_em: new Date().toISOString() });
+    }
+    store('dx-bloco', JSON.stringify(state.bloco));
+    document.querySelectorAll(`.note[data-nota="${CSS.escape(url)}"]`).forEach((x) => { x.outerHTML = botaoNota(url); });
+    atualizarBloco();
+    return;
+  }
   // salvar: grava na caixa de entrada do NeuroOS; sem servidor, copia a nota
   const b = e.target.closest('.save'); if (!b || b.dataset.state === 'saved') return;
   const url = b.dataset.url;
@@ -583,6 +661,59 @@ $('#main').addEventListener('click', async (e) => {
     catch { toast('Não consegui salvar nem copiar. Abra o Diário pelo Diario-X.bat'); }
   }
 });
+
+/* ── Bloco de notas ── */
+let focoAntes = null;
+function atualizarBloco() {
+  const n = state.bloco.length;
+  const b = $('#bloco-n'); b.hidden = !n; b.textContent = n;
+  $('#guardados-t').textContent = `Matérias guardadas (${n})`;
+  $('#guardados').innerHTML = n ? state.bloco.map((x, i) => `<div class="guardado">
+      <a href="${esc(x.fonte_url)}" target="_blank" rel="noopener">${esc(x.titulo)}</a>
+      <p class="byline">${esc(x.fonte_nome)} · ${esc(x.publicado_em)}</p>
+      <button class="src" data-tirar="${i}">Remover</button>
+    </div>`).join('') : '<p class="vazio">Use "+ Bloco de notas" em qualquer matéria para guardar aqui.</p>';
+}
+function markdownBloco() {
+  const p = ['# Meu bloco de notas — Diário X', ''];
+  if (state.nota.trim()) p.push(state.nota.trim(), '');
+  if (state.bloco.length) {
+    p.push('## Matérias guardadas', '');
+    for (const x of state.bloco) p.push(`- [${x.titulo}](${x.fonte_url}) — ${x.fonte_nome}, ${x.publicado_em}${x.pra_voce ? `\n  Pra você: ${x.pra_voce}` : ''}`);
+  }
+  return p.join('\n');
+}
+function abrirGaveta() {
+  focoAntes = document.activeElement;
+  const g = $('#gaveta'); g.inert = false; g.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('gaveta-aberta');
+  setTimeout(() => $('#nota-livre').focus(), 60);
+}
+function fecharGaveta() {
+  const g = $('#gaveta'); g.inert = true; g.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('gaveta-aberta');
+  focoAntes?.focus?.();
+}
+$('#nota-livre').value = state.nota;
+$('#nota-livre').addEventListener('input', (e) => { state.nota = e.target.value; store('dx-nota', state.nota); });
+$('#bloco-btn').onclick = abrirGaveta;
+$('#gaveta-x').onclick = fecharGaveta;
+$('#gaveta-fundo').onclick = fecharGaveta;
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.body.classList.contains('gaveta-aberta')) fecharGaveta(); });
+$('#guardados').addEventListener('click', (e) => {
+  const t = e.target.closest('[data-tirar]'); if (!t) return;
+  const [x] = state.bloco.splice(Number(t.dataset.tirar), 1);
+  store('dx-bloco', JSON.stringify(state.bloco));
+  document.querySelectorAll(`.note[data-nota="${CSS.escape(x.fonte_url)}"]`).forEach((n) => { n.outerHTML = botaoNota(x.fonte_url); });
+  atualizarBloco();
+});
+$('#nota-copiar').onclick = async () => { try { await navigator.clipboard.writeText(markdownBloco()); toast('Bloco de notas copiado'); } catch { toast('O navegador bloqueou a cópia'); } };
+$('#nota-baixar').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([markdownBloco()], { type: 'text/markdown' }));
+  a.download = 'bloco-de-notas-diario-x.md'; a.click(); URL.revokeObjectURL(a.href);
+};
+atualizarBloco();
 
 boot();
 </script>

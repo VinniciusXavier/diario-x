@@ -1,6 +1,36 @@
 {
   "edicoes": [
     {
+      "data": "2026-11-03",
+      "numero": 8,
+      "manchete_titulo": "Claude Code 2.1.317 avisa antes de enviar seu e-mail e corrige MCPs que caíam",
+      "total": 52
+    },
+    {
+      "data": "2026-11-02",
+      "numero": 7,
+      "manchete_titulo": "Vercel Labs lança Agent Desktop em Rust para controle de SO via acessibilidade",
+      "total": 55
+    },
+    {
+      "data": "2026-11-01",
+      "numero": 6,
+      "manchete_titulo": "OpenAI unifica limites de uso do ChatGPT e Codex em cota compartilhada",
+      "total": 55
+    },
+    {
+      "data": "2026-10-31",
+      "numero": 5,
+      "manchete_titulo": "Claude Code 2.1.316 traz trava para desativar ultrathink e cotas compartilhadas",
+      "total": 55
+    },
+    {
+      "data": "2026-10-30",
+      "numero": 4,
+      "manchete_titulo": "Claude Code 2.1.314 bloqueia gravações fora da pasta do projeto em qualquer permissão",
+      "total": 55
+    },
+    {
       "data": "2026-10-29",
       "numero": 3,
       "manchete_titulo": "Gemini 4 Carbon estreia em 1º no ranking geral, mas só para defensores de segurança",
