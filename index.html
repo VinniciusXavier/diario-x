@@ -9,61 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/jornal.css">
 <style>
-  /* Tokens: papel de jornal + identidade Vinicius Xavier (vermelho = aja aqui) */
-  :root {
-    --desk: #2b2620;
-    --paper: #f3ead6;
-    --paper-2: #e9dec4;
-    --ink: #1b1813;
-    --ink-2: #4a4337;
-    --ink-3: #635a4a;
-    --rule: #1b18132b;
-    --rule-strong: #1b1813;
-    --accent-text: #a61f17;
-    --accent-solid: #b8241b;
-    --on-accent: #fff8ec;
-    --ok: #2d6b44;
-    --ease: cubic-bezier(.23, 1, .32, 1);
-
-    /* três vozes: logotipo, serifa editorial, sem serifa da marca */
-    --logo: "UnifrakturMaguntia", "Old English Text MT", serif;
-    --serif: "Source Serif 4", Georgia, serif;
-    --sans: "Manrope", system-ui, sans-serif;
-
-    /* escala por papel */
-    --t-manchete: clamp(2.3rem, 4.8vw, 6rem);  /* cresce com a tela larga para a manchete ocupar a largura */
-    --t-secao: 1.75rem;
-    --t-titulo: 1.3125rem;
-    --t-texto: 1.0625rem;
-    --t-nota: .875rem;
-    --t-rotulo: .75rem;
-
-    --bar-h: 64px;
-    color-scheme: light;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --desk: #0d0b09; --paper: #1d1913; --paper-2: #28221a; --ink: #ecdfc3; --ink-2: #cbbd9e; --ink-3: #ab9e83;
-      --rule: #ecdfc32b; --rule-strong: #ecdfc3; --accent-text: #ff7a68; --accent-solid: #c9322a; --ok: #7fc79a;
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --desk: #0d0b09; --paper: #1d1913; --paper-2: #28221a; --ink: #ecdfc3; --ink-2: #cbbd9e; --ink-3: #ab9e83;
-    --rule: #ecdfc32b; --rule-strong: #ecdfc3; --accent-text: #ff7a68; --accent-solid: #c9322a; --ok: #7fc79a;
-    color-scheme: dark;
-  }
-
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scrollbar-color: var(--ink-3) var(--desk); accent-color: var(--accent-solid); }
-  body { margin: 0; background: var(--desk); color: var(--ink); font: 400 var(--t-texto)/1.6 var(--serif); font-optical-sizing: auto; -webkit-font-smoothing: antialiased; caret-color: var(--accent-solid); }
-  ::selection { background: var(--accent-solid); color: var(--on-accent); }
-  a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px; }
-  button { -webkit-tap-highlight-color: transparent; font: inherit; }
-  button:active { transform: scale(.97); }
-  :focus-visible { outline: 3px solid var(--accent-solid); outline-offset: 2px; }
-
   /* papéis tipográficos */
   .rotulo { font: 700 var(--t-rotulo)/1.3 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
   .byline { margin: .35rem 0 .6rem; font: 600 var(--t-rotulo)/1.4 var(--sans); letter-spacing: .02em; color: var(--ink-3); }
@@ -73,53 +20,45 @@
   h3.titulo a:hover { text-decoration: underline; }
   .resumo { margin: 0; color: var(--ink-2); text-wrap: pretty; }
 
-  /* a folha de jornal ocupa a tela toda; --gutter é a margem interna, que a barra fixa também usa */
+  /* A largura de leitura é compartilhada pela capa, navegação e cadernos. */
   .sheet {
-    --gutter: clamp(1rem, 4vw, 4.5rem);
-    position: relative; min-height: 100vh; margin: 0; padding: 0 var(--gutter) 2.5rem;
-    background-color: var(--paper);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .15 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --gutter: clamp(1rem, 3vw, 2.5rem);
+    min-height: 100vh; max-width: 1300px; margin: 0 auto; padding: 0 var(--gutter) 2.5rem; background: var(--paper);
   }
+  main { overflow-wrap: anywhere; }
 
   /* ── Cabeçalho ── */
-  .strip { display: flex; justify-content: space-between; gap: 1rem; padding: .9rem 0 .7rem; border-bottom: 1px solid var(--rule-strong); }
-  .title { text-align: center; padding: 1.5rem 0 .3rem; }
-  .title h1 { margin: 0; font: 400 clamp(3.2rem, 8.5vw, 6rem)/.95 var(--logo); }
+  .strip { text-align: center; padding: .9rem 0 .25rem; }
+  .title { text-align: center; padding: .5rem 0 .7rem; }
+  .title h1 { margin: 0; font: 400 clamp(3rem, 6.6vw, 5.5rem)/.95 var(--logo); }
   .title h1 .x { color: var(--accent-text); }
-  .title .motto { margin-top: .5rem; font: italic 400 var(--t-texto)/1.4 var(--serif); color: var(--ink-2); }
-  .dateline { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1rem; border-top: 4px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); padding: .55rem 0; }
-  .dateline .rotulo { color: var(--ink); }
+  .title .motto { margin-top: .45rem; font: italic 400 var(--t-nota)/1.4 var(--serif); color: var(--ink-2); }
+  .dateline { display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: 1rem; border-bottom: 1px solid var(--rule); padding: .35rem 0 .6rem; }
+  #dateline { grid-column: 2; text-align: center; }
 
   /* ── Barra (sólida, sem vidro) ── */
-  .bar { position: sticky; top: 0; z-index: 20; margin: 0 calc(-1 * var(--gutter)); padding: .6rem var(--gutter); background: var(--paper); border-bottom: 1px solid var(--rule); }
-  .bar-in { display: flex; align-items: center; gap: 1.2rem; }
-  .seg { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1.5px solid var(--rule-strong); padding: 2px; border-radius: 999px; flex: none; }
-  .seg button { position: relative; z-index: 1; border: 0; background: none; color: var(--ink); cursor: pointer; font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; padding: .7rem 1rem; border-radius: 999px; min-width: 5.8rem; transition: color 240ms var(--ease); }
-  .seg button[aria-selected="true"] { color: var(--paper); }
-  .seg .thumb { position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc((100% - 4px) / 3); border-radius: 999px; background: var(--ink); transition: transform 380ms cubic-bezier(.3, 1.25, .5, 1); }
-  .cats { display: flex; gap: .2rem; overflow-x: auto; scrollbar-width: none; flex: 1; }
-  .cats a { flex: none; text-decoration: none; padding: .6rem .7rem; border-radius: 6px; font: 600 var(--t-nota)/1 var(--sans); color: var(--ink-2); transition: background 160ms var(--ease); }
+  .bar { position: sticky; top: 0; z-index: 20; padding: .3rem 0; background: var(--paper); border-bottom: 3px double var(--rule-strong); }
+  .bar-in { display: grid; grid-template-columns: 1fr minmax(0, auto) 1fr; align-items: center; gap: .35rem 1rem; }
+  .seg { display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; justify-self: start; }
+  .seg button { border: 0; border-bottom: 2px solid transparent; background: none; color: var(--ink-3); cursor: pointer; font: 700 var(--t-rotulo)/1 var(--sans); padding: .65rem .55rem .5rem; min-height: 36px; }
+  .seg button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent-solid); }
+  .cats { display: flex; overflow-x: auto; scrollbar-width: thin; }
+  .cats:empty { display: none; }
+  .cats a { flex: none; text-decoration: none; padding: .6rem .5rem; font: 700 var(--t-rotulo)/1 var(--sans); color: var(--ink-2); }
   .cats a:hover { background: var(--paper-2); color: var(--ink); }
-  .cats a b { font-weight: 600; color: var(--ink-3); margin-left: .3rem; }
-  .tools { display: flex; gap: .5rem; align-items: center; flex: none; }
-  .ed-select { font: 600 var(--t-rotulo)/1 var(--sans); color: var(--ink); background: transparent; border: 1.5px solid var(--rule-strong); border-radius: 999px; padding: .6rem .8rem; min-height: 38px; }
-  .icon-btn { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--rule-strong); background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+  .tools { grid-column: -2; justify-self: end; display: flex; gap: .25rem; align-items: center; }
+  .ed-select { font: 600 var(--t-rotulo)/1 var(--sans); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; padding: .4rem; min-height: 34px; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 3px; border: 1px solid transparent; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+  .icon-btn:hover { background: var(--paper-2); }
 
-  /* ── Fotos que se mexem (só nos destaques) ── */
-  .foto { position: relative; margin: 0; overflow: hidden; background: var(--paper-2); }
-  .foto img { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) sepia(.5) contrast(1.15) brightness(.95); transform-origin: 50% 40%; animation: respira 16s ease-in-out infinite alternate; animation-delay: var(--d, 0s); transition: filter 520ms var(--ease); }
-  .foto::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: multiply; background: radial-gradient(#0000002a .7px, transparent .9px) 0 0 / 3px 3px; transition: opacity 520ms var(--ease); }
-  .foto:hover img, .foto:active img { filter: none; }
-  .foto:hover::after, .foto:active::after { opacity: 0; }
-  @keyframes respira { from { transform: scale(1.04) translate(-1.2%, -.8%); } to { transform: scale(1.12) translate(1.4%, 1%); } }
-  .ar-photo { aspect-ratio: 4 / 3; }
-  .ar-wide { aspect-ratio: 16 / 9; }
-  .moldura { box-shadow: 0 0 0 4px var(--paper), 0 0 0 5.5px var(--rule-strong); }
-
-  .ar-card { aspect-ratio: 16 / 9; margin-bottom: 1rem; }
-  .sem-foto { display: grid; place-items: center; padding: 1rem; text-align: center; border: 1px solid var(--rule); background: color-mix(in srgb, var(--paper-2) 80%, transparent); }
-  .sem-foto span { font: italic 400 clamp(1.2rem, 1.6vw, 1.6rem)/1.2 var(--serif); color: var(--ink-2); }
-  .sem-foto::after { display: none; }
+  /* Prévias de fonte incluem fotos, telas e imagens com texto. */
+  .foto { min-width: 0; margin: 0; }
+  .foto-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 4px; background: var(--paper-2); }
+  .foto-frame img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+  .foto-card { margin-bottom: .85rem; }
+  .foto-thumb { width: clamp(3.5rem, 5vw, 4.5rem); flex: none; }
+  .foto-thumb .foto-frame { aspect-ratio: 4 / 3; }
+  .foto figcaption { margin-top: .35rem; color: var(--ink-3); font: 600 var(--t-rotulo)/1.4 var(--sans); }
 
   /* ── "Pra você": fechado é um botão; aberto vira a notinha ── */
   .pv { margin: .8rem 0 1rem; }
@@ -140,25 +79,60 @@
   .save[data-state="saved"] { background: transparent; color: var(--ok); border-color: currentColor; cursor: default; filter: none; }
 
   /* ── Primeira página ── */
-  .front { padding: 2.6rem 0 2.8rem; }
-  .stamp { display: block; width: max-content; margin: 0 auto; font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .24em; text-transform: uppercase; color: var(--accent-text); border: 1.5px solid currentColor; padding: .4rem .5rem .4rem .75rem; transform: rotate(-2deg); }
-  .banner { margin: 1.1rem auto 1.1rem; max-width: none; /* a manchete corre de margem a margem, como no jornal impresso */ text-align: center; font: 700 var(--t-manchete)/1.03 var(--serif); letter-spacing: -.025em; text-wrap: balance; }
+  .front { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 1.5rem; padding: 1.35rem 0 1.8rem; }
+  .cover-nav { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: 1rem; padding-bottom: .45rem; border-bottom: 1px solid var(--rule); }
+  .cover-controls { display: flex; align-items: center; gap: .35rem; }
+  .cover-position { color: var(--ink-3); font: 700 var(--t-rotulo)/1 var(--sans); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cover-arrow { width: 40px; height: 36px; border-color: var(--rule); }
+  .cover-arrow[data-cover="-1"] svg { transform: rotate(180deg); }
+  .lead { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); grid-template-rows: max-content auto; grid-template-areas: "headline photo" "body photo"; column-gap: 1.25rem; align-items: start; align-content: start; }
+  .front:not(:has(.minuto)), .lead:not(:has(.foto)) { grid-template-columns: minmax(0, 1fr); }
+  .lead:not(:has(.foto)) { grid-template-areas: "headline" "body"; }
+  .lead:not(:has(.foto)) .banner { max-width: 27ch; }
+  .lead-head { grid-area: headline; }
+  .lead-body { grid-area: body; }
+  .stamp { display: block; color: var(--accent-text); }
+  .banner { margin: .5rem 0; font: 700 var(--t-manchete)/1.04 var(--serif); letter-spacing: -.035em; text-wrap: pretty; }
   .banner a { text-decoration: none; }
-  .front .byline { text-align: center; margin-bottom: 2.4rem; }
-  .front-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 3rem; align-items: start; }
-  .lead-text { font-size: 1.1875rem; line-height: 1.6; margin: 1.6rem 0 0; max-width: 62ch; }
-  .minuto { border-top: 3px solid var(--rule-strong); padding-top: 1rem; }
-  .minuto h2 { margin: 0 0 .4rem; }
-  .minuto ol { list-style: none; margin: 0; padding: 0; counter-reset: m; }
-  .minuto li { border-bottom: 1px solid var(--rule); }
-  .minuto a { display: block; text-decoration: none; padding: .75rem 0; }
+  .lead-text { color: var(--ink-2); font-size: var(--t-texto); line-height: 1.5; margin: .25rem 0 0; max-width: 60ch; }
+  .lead .foto { grid-area: photo; }
+  .lead .actions :is(.src, .save, .note) { padding-inline: .6rem; border-radius: 4px; }
+  .minuto { border-left: 1px solid var(--rule); padding-left: 1.25rem; }
+  .minuto h2 { margin: 0; font: 700 var(--t-titulo)/1.15 var(--serif); }
+  .minuto ol { list-style: none; margin: 0; padding: 0; }
+  .minuto li + li { border-top: 1px solid var(--rule); }
+  .minuto a { display: flex; align-items: flex-start; gap: .6rem; text-decoration: none; padding: .7rem 0; }
+  .minuto .chamada { min-width: 0; flex: 1; }
   .minuto a:hover .t { text-decoration: underline; }
   .minuto .k { display: block; margin-bottom: .25rem; }
-  .minuto .t { font: 600 var(--t-texto)/1.35 var(--serif); }
+  .minuto .t { display: block; font: 600 1rem/1.3 var(--serif); }
 
-  .editorial { border-top: 1px solid var(--rule-strong); padding: 2.2rem 0 2.4rem; text-align: center; }
-  .editorial .rotulo { display: block; margin-bottom: .9rem; }
-  .editorial p { margin: 0 auto; max-width: 62ch; font: italic 400 clamp(1.3rem, 1.5vw, 1.6rem)/1.6 var(--serif); color: var(--ink-2); text-wrap: pretty; }
+  /* ── Curadoria da Semana e do Mês ── */
+  .panorama { padding: 1.65rem 0 0; }
+  .panorama header { padding: 0 0 1.15rem; border-bottom: 1px solid var(--rule-strong); }
+  .panorama h2 { margin: .35rem 0 .3rem; font: 700 var(--t-manchete)/1.04 var(--serif); letter-spacing: -.035em; }
+  .panorama header p { margin: 0; color: var(--ink-2); }
+  .panorama h3 { margin: 0 0 .65rem; font: 700 var(--t-titulo)/1.2 var(--serif); }
+  .periodo-manchetes { padding: 1.25rem 0; border-bottom: 1px solid var(--rule); }
+  .periodo-capas, .periodo-selecoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 1.15rem; }
+  .periodo-capas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .periodo-capa { min-width: 0; }
+  .periodo-capa .foto { margin-bottom: .6rem; }
+  .periodo-capa h4 { margin: 0; font: 700 var(--t-titulo)/1.22 var(--serif); }
+  .panorama a:not(.src) { text-decoration: none; }
+  .panorama a:not(.src):hover { text-decoration: underline; }
+  .periodo-selecoes { padding-top: 1.35rem; }
+  .periodo-selecoes section + section { border-left: 1px solid var(--rule); padding-left: 1.15rem; }
+  .periodo-selecoes ul { list-style: none; padding: 0; margin: 0; }
+  .periodo-selecoes li + li { border-top: 1px solid var(--rule); }
+  .periodo-selecoes li a { display: block; padding: .45rem 0; font: 600 var(--t-texto)/1.3 var(--serif); }
+  .arquivo-periodo { margin: 2rem 0 0; padding-top: .85rem; border-top: 3px double var(--rule-strong); scroll-margin-top: calc(var(--bar-h) + 1rem); }
+  .arquivo-periodo h2 { margin: 0; font: 700 var(--t-secao)/1.2 var(--serif); }
+  .panorama .src { margin-top: 1.25rem; }
+
+  .editorial { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); gap: .6rem 1.5rem; border-top: 1px solid var(--rule-strong); padding: 1.15rem 0 1.5rem; }
+  .editorial h2 { margin: 0; font: 700 var(--t-titulo)/1.25 var(--serif); }
+  .editorial p { margin: 0; max-width: 72ch; font: italic 400 var(--t-texto)/1.55 var(--serif); color: var(--ink-2); text-wrap: pretty; }
 
   /* Skill para testar hoje */
   .teste { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 2.4rem; border: 1.5px solid var(--rule-strong); padding: 1.8rem 2rem; margin-bottom: .6rem; }
@@ -171,18 +145,20 @@
   .teste .tempo { margin-top: 1rem; }
 
   /* ── Seções ── */
-  .section { padding-top: 4rem; scroll-margin-top: calc(var(--bar-h) + 1rem); }
+  .section { margin-top: 2.25rem; scroll-margin-top: calc(var(--bar-h) + 1rem); }
   [id^="m-"] { scroll-margin-top: calc(var(--bar-h) + 1rem); }
-  .sec-head { display: flex; align-items: baseline; gap: 1rem; border-bottom: 2px solid var(--rule-strong); padding-bottom: .7rem; }
+  .sec-head { display: flex; align-items: baseline; gap: .5rem 1rem; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule); padding: .7rem 0; }
   .sec-head h2 { margin: 0; font: 700 var(--t-secao)/1.1 var(--serif); letter-spacing: -.015em; }
   .sec-head .sub { color: var(--ink-2); font-style: italic; }
-  .sec-head .rotulo { margin-left: auto; flex: none; }
 
-  .feature { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.6rem; align-items: center; padding: 2.2rem 0; border-bottom: 1px solid var(--rule); }
+  .feature { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; padding: 1.5rem 0; border-bottom: 1px solid var(--rule); }
+  .feature:not(:has(.foto)) { grid-template-columns: minmax(0, 1fr); }
   .feature h3.titulo { font-size: var(--t-secao); line-height: 1.15; }
   /* até 3 colunas; com 2 matérias, as 2 dividem a largura em vez de deixar um buraco */
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(260px, calc((100% - 5.6rem) / 3)), 1fr)); gap: 0 2.8rem; }
-  .cards > article { padding: 1.8rem 0 2rem; border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, max(260px, calc((100% - 3rem) / 3))), 1fr)); column-gap: 1.5rem; }
+  .cards > article { position: relative; min-width: 0; padding: 1.25rem 0 1.5rem; border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; }
+  .cards > article + article::before { content: ""; position: absolute; top: 1.25rem; bottom: 1.5rem; left: -.75rem; border-left: 1px solid var(--rule); }
+  .cards > article:nth-child(3n + 1)::before { display: none; }
   .cards .actions { margin-top: auto; }
   .cards .pv { margin-bottom: 1.1rem; }
   [hidden] { display: none !important; }
@@ -197,13 +173,15 @@
   .grupo h3.g::after { content: ""; flex: 1; border-top: 1px solid var(--rule-strong); }
   .ads { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
   .ad { border: 1px solid var(--rule-strong); padding: 1.1rem 1.2rem 1.1rem; display: flex; flex-direction: column; gap: .5rem; }
-  .ad-top { display: flex; justify-content: space-between; align-items: baseline; gap: .8rem; }
+  .ad-top { display: flex; justify-content: space-between; align-items: flex-start; gap: .8rem; }
+  .ad-top > div { min-width: 0; }
+  .ad-top .foto-thumb { width: clamp(4.25rem, 6vw, 5.5rem); }
   .ad h4 { margin: 0; font: 700 var(--t-titulo)/1.2 var(--serif); word-break: break-word; }
   .ad h4 a { text-decoration: none; }
   .ad h4 a:hover { text-decoration: underline; }
-  .ad .stars { flex: none; font: 700 var(--t-nota)/1 var(--sans); color: var(--ink); white-space: nowrap; }
+  .ad-metrics { display: flex; flex-wrap: wrap; gap: .35rem .7rem; align-items: center; font: 600 var(--t-rotulo)/1.3 var(--sans); color: var(--ink-3); }
+  .ad .stars { white-space: nowrap; }
   .ad .stars svg { vertical-align: -1px; margin-right: .2rem; }
-  .ad .alta { font: 700 var(--t-rotulo)/1.3 var(--sans); color: var(--accent-text); }
   .ad .oque { margin: 0; font: 600 var(--t-texto)/1.4 var(--serif); }
   .ad .det { margin: 0; font-size: var(--t-nota); line-height: 1.55; color: var(--ink-2); }
   .ad .pv { margin: .2rem 0 .4rem; }
@@ -225,44 +203,49 @@
   @keyframes rise { to { opacity: 1; transform: none; filter: none; } }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .rise { animation: fade 200ms linear forwards; transform: none; filter: none; animation-delay: 0ms; }
-    @keyframes fade { to { opacity: 1; } }
-    .foto img { animation: none; }
-    .seg .thumb { transition: none; }
+    .rise { animation: none; opacity: 1; transform: none; filter: none; }
   }
 
   @media (max-width: 1000px) {
-    .sheet { --gutter: 2rem; padding-bottom: 2rem; }
-    .front-grid, .feature, .teste { grid-template-columns: 1fr; gap: 1.8rem; }
+    .bar-in { grid-template-columns: minmax(0, 1fr) auto; }
+    .tools { grid-row: 1; }
+    .cats { grid-column: 1 / -1; }
+    .front { grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr); }
+    .lead { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "headline" "photo" "body"; }
+    .lead .foto { margin: .35rem 0 .65rem; }
     .cards, .ads { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cards > article:nth-child(3n + 1)::before { display: block; }
+    .cards > article:nth-child(2n + 1)::before { display: none; }
   }
-  @media (max-width: 640px) {
-    .sheet { --gutter: 1rem; padding-bottom: 1.5rem; }
-    .bar { padding-block: .5rem; }
-    .bar-in { gap: .5rem .6rem; flex-wrap: wrap; }
-    .cats { display: none; }                 /* o "Dia em 1 minuto" faz esse papel no celular */
-    .seg { flex: 1 1 100%; }                 /* linha própria: dividindo com o seletor, "Semana" não cabia no terço */
-    .seg button { min-width: 0; padding: .75rem .4rem; }
-    .tools { flex: 1; justify-content: flex-end; }
-    .ed-select { margin-right: auto; }
-    .strip .c, .dateline .side { display: none; }
-    .dateline { justify-content: center; }
-    .cards, .ads { grid-template-columns: 1fr; }
+  @media (max-width: 680px) {
+    .sheet { padding-bottom: 1.5rem; }
+    .bar-in { gap: .25rem .5rem; }
+    .seg button { padding-inline: .3rem; }
+    .icon-btn { width: 36px; height: 40px; }
+    .dateline .side { display: none; }
+    .dateline { grid-template-columns: 1fr; text-align: center; }
+    #dateline { grid-column: auto; }
+    .front, .editorial, .feature, .teste, .cards, .ads { grid-template-columns: minmax(0, 1fr); }
+    .periodo-capas, .periodo-selecoes { grid-template-columns: minmax(0, 1fr); }
+    .periodo-capa + .periodo-capa { padding-top: .75rem; border-top: 1px solid var(--rule); }
+    .periodo-capa + .periodo-capa:has(.foto) { display: grid; grid-template-columns: minmax(0, 1fr) 5rem; column-gap: .75rem; }
+    .periodo-capa + .periodo-capa .foto { grid-column: 2; grid-row: 1 / 3; margin: 0; }
+    .periodo-capa + .periodo-capa .foto-frame { aspect-ratio: 4 / 3; }
+    .periodo-selecoes section + section { border-left: 0; border-top: 1px solid var(--rule); padding: .8rem 0 0; }
+    .minuto { border-top: 1px solid var(--rule); border-left: 0; padding: 1rem 0 0; }
+    .cover-arrow { width: 44px; height: 44px; }
+    .cards > article + article::before { display: none; }
     .sec-head { flex-wrap: wrap; }
     .sec-head .sub { flex-basis: 100%; order: 3; }
     .teste { padding: 1.3rem 1.2rem; }
     .src, .save { min-height: 42px; }
   }
+  @media (max-width: 360px) {
+    .bar-in { grid-template-columns: 1fr; }
+    .tools { grid-row: 2; justify-self: start; }
+  }
 
-  /* ── Acabamento: o jornal ganha chapa de impressão ── */
-  .lead-text::first-letter { float: left; font: 400 4.6rem/.82 var(--logo); padding: .32rem .55rem 0 0; color: var(--accent-text); }
-  main { counter-reset: sec; }
-  .section { counter-increment: sec; }
-  .sec-head h2::before { content: "№ " counter(sec, decimal-leading-zero); display: block; margin-bottom: .35rem; font: 700 var(--t-rotulo)/1 var(--sans); letter-spacing: .14em; color: var(--accent-text); }
-  .sec-head { align-items: flex-end; }
   .pv p { border-left: 3px solid var(--accent-solid); border-radius: 0 3px 3px 0; background: linear-gradient(90deg, color-mix(in srgb, var(--accent-solid) 9%, transparent), color-mix(in srgb, var(--paper-2) 70%, transparent) 70%); }
-  .cards > article { padding: 1.6rem 1.2rem 1.8rem; margin: 0 -1.2rem; border-bottom: 1px solid var(--rule); border-radius: 2px; transition: background 200ms var(--ease), box-shadow 200ms var(--ease); }
-  .cards > article:hover { background: color-mix(in srgb, var(--paper-2) 55%, transparent); box-shadow: inset 3px 0 0 var(--accent-solid); }
   .ad { transition: transform 200ms var(--ease), box-shadow 200ms var(--ease); }
   .ad:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--rule-strong); }
   .banner a { background: linear-gradient(var(--accent-solid), var(--accent-solid)) 0 100% / 0 .09em no-repeat; transition: background-size 420ms var(--ease); }
@@ -277,8 +260,8 @@
   .icon-btn { position: relative; }
   .icon-btn .badge { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--accent-solid); color: var(--on-accent); font: 700 .6875rem/18px var(--sans); text-align: center; }
   .gaveta-fundo { position: fixed; inset: 0; z-index: 40; background: #0008; opacity: 0; pointer-events: none; transition: opacity 240ms var(--ease); }
-  .gaveta { position: fixed; top: 0; right: 0; bottom: 0; z-index: 41; width: min(440px, 100%); display: flex; flex-direction: column; background: var(--paper); border-left: 1.5px solid var(--rule-strong); box-shadow: -30px 0 60px -30px #000a; transform: translateX(104%); transition: transform 340ms var(--ease); }
-  .gaveta.aberta { transform: none; }
+  .gaveta { position: fixed; top: 0; right: 0; bottom: 0; z-index: 41; width: min(440px, 100%); display: flex; flex-direction: column; background: var(--paper); border-left: 1.5px solid var(--rule-strong); transform: translateX(104%); transition: transform 340ms var(--ease); }
+  .gaveta.aberta { transform: none; box-shadow: -30px 0 60px -30px #000a; }
   body.gaveta-aberta .gaveta-fundo { opacity: 1; pointer-events: auto; }
   .gaveta header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; border-bottom: 4px double var(--rule-strong); }
   .gaveta h2 { margin: 0; font: 400 1.9rem/1 var(--logo); }
@@ -309,17 +292,14 @@
   .tamanhos label:has(input:focus-visible) { outline: 2px solid var(--accent-solid); outline-offset: 2px; }
   .busca-log { margin: .7rem 0 0; max-height: 220px; overflow: auto; padding: .7rem; border: 1px solid var(--rule); border-radius: 3px; font: 400 .78rem/1.5 ui-monospace, monospace; white-space: pre-wrap; color: var(--ink-2); }
   .ajustes .salvar { width: 100%; justify-content: center; min-height: 44px; }
-  @media (prefers-reduced-motion: reduce) { .gaveta, .gaveta-fundo, .ad, .cards > article, .banner a { transition: none; } }
-  @media (max-width: 640px) { .cards > article { margin: 0; padding: 1.4rem 0 1.6rem; } }
+  @media (prefers-reduced-motion: reduce) { .gaveta, .gaveta-fundo, .ad, .banner a { transition: none; } }
 </style>
 </head>
 <body>
 <div class="sheet">
   <header>
     <div class="strip rotulo">
-      <span id="vol">Vol. I</span>
-      <span class="c" id="caderno">Caderno de Inteligência Artificial</span>
-      <span>Preço: um café</span>
+      <span id="caderno">Caderno de Inteligência Artificial</span>
     </div>
     <div class="title">
       <h1>Diário <span class="x">X</span></h1>
@@ -328,14 +308,12 @@
     <div class="dateline rotulo">
       <span class="side" id="cidade"></span>
       <span id="dateline"></span>
-      <span class="side" id="leitura"></span>
     </div>
   </header>
 
   <nav class="bar" id="bar" aria-label="Período e seções">
     <div class="bar-in">
       <div class="seg" role="tablist" id="seg" aria-label="Período">
-        <span class="thumb" id="thumb"></span>
         <button role="tab" data-p="24h" aria-selected="true">Hoje</button>
         <button role="tab" data-p="semana" aria-selected="false" tabindex="-1">Semana</button>
         <button role="tab" data-p="mes" aria-selected="false" tabindex="-1">Mês</button>
@@ -437,8 +415,10 @@
 const CATS = [
   { id: 'inovacoes', nome: 'Inovações', sub: 'Modelos, versões e correções que mudam o seu trabalho' },
   { id: 'design', nome: 'Design com IA', sub: 'Sites premiados e como estão desenhando com IA' },
-  { id: 'resultados', nome: 'Quem fez e deu certo', sub: 'Resultados reais, com número e fonte' },
-  { id: 'vozes', nome: 'Vozes do ramo', sub: 'Especialistas daqui e de fora, traduzidos para você' },
+  { id: 'resultados', nome: 'Resultados', sub: 'Casos reais, com número e fonte' },
+  { id: 'vozes', nome: 'Vozes', sub: 'Perspectivas de especialistas daqui e de fora' },
+  { id: 'pesquisa', nome: 'Pesquisa', sub: 'Estudos e bastidores de como as ferramentas são construídas' },
+  { id: 'negocios', nome: 'Negócios', sub: 'Parcerias, aquisições e decisões que mudam o uso das ferramentas' },
   { id: 'classificados', nome: 'Classificados', sub: 'O que está em alta no GitHub, por tipo' },
 ];
 const GRUPOS = [
@@ -453,18 +433,23 @@ const VISIVEIS = 3;      // cartões abertos por seção, além do destaque
 const ADS_VISIVEIS = 3;  // anúncios abertos por grupo
 const CAT_DE = (it) => ({ gringos: 'vozes', skills: 'classificados' }[it.categoria] || it.categoria); // edições antigas
 const IDIOMAS = { en: 'inglês', ja: 'japonês', zh: 'chinês', es: 'espanhol', ko: 'coreano', fr: 'francês', de: 'alemão', ru: 'russo' };
-const JANELA = { '24h': 0, semana: 6, mes: 29 }; // dias de edições anteriores incluídas
+const PERIODOS = {
+  '24h': { diasAnteriores: 0 },
+  semana: { diasAnteriores: 6, titulo: 'O melhor da semana', limite: 3 },
+  mes: { diasAnteriores: 29, titulo: 'O melhor do mês', limite: 5 },
+};
 const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const DIAS = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 
-const state = { bloco: lerBloco(), nota: store('dx-nota') || '', indice: [], edicoes: new Map(), sel: null, periodo: store('dx-aba') || '24h', abertos: new Set(), salvos: new Set(), cfg: null };
+const periodoSalvo = store('dx-aba');
+const state = { bloco: lerBloco(), nota: store('dx-nota') || '', indice: [], edicoes: new Map(), sel: null, periodo: Object.hasOwn(PERIODOS, periodoSalvo) ? periodoSalvo : '24h', abertos: new Set(), salvos: new Set(), cfg: null };
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const parseDia = (d) => new Date(d + 'T12:00:00');
 const diasEntre = (a, b) => Math.round((parseDia(a) - parseDia(b)) / 86400000);
 const dataLonga = (d) => { const x = parseDia(d); return `${DIAS[x.getDay()]}, ${x.getDate()} de ${MESES[x.getMonth()]} de ${x.getFullYear()}`; };
 const quando = (pub, ref) => { const n = diasEntre(ref, pub); return n <= 0 ? 'hoje' : n === 1 ? 'ontem' : `há ${n} dias`; };
-const ICON_OUT = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+const ICON_CHEVRON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>';
 const ICON_STAR = '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.8 2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>';
 
 function lerBloco() { try { return JSON.parse(localStorage.getItem('dx-bloco') || '[]'); } catch { return []; } }
@@ -488,7 +473,8 @@ async function boot() {
   sel.innerHTML = state.indice.map((e) => `<option value="${e.data}">Nº ${e.numero} · ${e.data.slice(8)}/${e.data.slice(5, 7)}</option>`).join('');
   sel.onchange = () => abrir(sel.value);
   marcarAba();
-  await abrir(state.indice[0].data);
+  const pedida = new URLSearchParams(location.search).get('edicao');
+  await abrir(state.indice.find((e) => e.data === pedida)?.data || state.indice[0].data);
 }
 
 async function abrir(data) {
@@ -496,13 +482,12 @@ async function abrir(data) {
   state.abertos.clear();
   const datas = state.indice.map((e) => e.data).filter((d) => d <= data && diasEntre(data, d) <= 30);
   await Promise.all(datas.filter((d) => !state.edicoes.has(d)).map(async (d) => {
-    try { state.edicoes.set(d, await getJSON(`edicoes/${d}.json`)); } catch { state.edicoes.set(d, null); }
+    try { state.edicoes.set(d, await getJSON(`edicoes/${d}.json`)); } catch { /* tenta novamente na próxima abertura */ }
   }));
-  render();
+  if (state.sel === data) render();
 }
 
-/* Hoje = a edição do dia inteira; Semana e Mês somam as edições anteriores */
-const datasDoPeriodo = () => [...state.edicoes.keys()].filter((d) => d <= state.sel && diasEntre(state.sel, d) <= JANELA[state.periodo]).sort().reverse();
+const datasDoPeriodo = () => [...state.edicoes.keys()].filter((d) => d <= state.sel && diasEntre(state.sel, d) <= PERIODOS[state.periodo].diasAnteriores).sort().reverse();
 // cada edição traz as próprias seções (o jornal muda conforme a pessoa); edição sem "secoes" usa as de tecnologia
 function secoesDoPeriodo() {
   const vistos = new Set(), out = [];
@@ -533,21 +518,18 @@ function botaoNeuro(it, principal = false) {
 }
 const noBloco = (url) => state.bloco.some((x) => x.fonte_url === url);
 const botaoNota = (url) => `<button class="note" data-nota="${esc(url)}" aria-pressed="${noBloco(url)}">${noBloco(url) ? '✓ No bloco' : '+ Bloco de notas'}</button>`;
-const fonte = (it) => `<a class="src" href="${esc(it.fonte_url)}" target="_blank" rel="noopener">Ler na fonte ${ICON_OUT}</a>`;
-let fotoN = 0;
-// cartão sem foto (ou com foto quebrada) ganha uma capa com o nome do portal, para a fileira ficar alinhada
-function trocarPorCapa(img) {
-  const s = document.createElement('span'); s.textContent = img.dataset.fonte;
-  img.parentElement.classList.add('sem-foto'); img.replaceWith(s);
-}
-const capa = (it) =>`<figure class="foto ar-card sem-foto"><span>${esc(it.fonte_nome)}</span></figure>`;
-function foto(it, cls) {
-  if (cls === 'ar-card') {
-    if (!it.imagem) return capa(it);
-    return `<figure class="foto ar-card" style="--d:-${(fotoN++ * 3.7) % 16}s"><img src="${esc(it.imagem)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-fonte="${esc(it.fonte_nome)}" onerror="trocarPorCapa(this)"></figure>`;
-  }
+const urlMateria = (it) => `assets/materia.html?${new URLSearchParams({ edicao: it.edicao, id: it.id })}`;
+const linkMateria = (it, texto = it.titulo) => `<a href="${esc(urlMateria(it))}">${esc(texto)}</a>`;
+const fonte = (it) => `<a class="src" href="${esc(urlMateria(it))}">${it.reportagem ? 'Ler matéria completa' : 'Ler matéria'}</a>`;
+function foto(it, tipo, prioritario = false) {
   if (!it.imagem) return '';
-  return `<figure class="foto ${cls}" style="--d:-${(fotoN++ * 3.7) % 16}s"><img src="${esc(it.imagem)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.remove()"></figure>`;
+  const legenda = it.legenda_imagem || (tipo === 'lead' ? `Prévia · ${it.fonte_nome}` : '');
+  const foco = Number.isFinite(it.imagem_foco_vertical)
+    ? ` style="object-position: 50% ${Math.max(0, Math.min(100, it.imagem_foco_vertical))}%"` : '';
+  return `<figure class="foto foto-${tipo}">
+    <div class="foto-frame"><img src="${esc(it.imagem)}" alt=""${foco} ${prioritario ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" referrerpolicy="no-referrer" onerror="this.closest('figure').remove()"></div>
+    ${legenda && tipo !== 'thumb' ? `<figcaption>${esc(legenda)}</figcaption>` : ''}
+  </figure>`;
 }
 function byline(it) {
   const trad = it.idioma && it.idioma !== 'pt' && it.titulo_original ? ` · <span class="trad">traduzido do ${IDIOMAS[it.idioma] || it.idioma}</span>` : '';
@@ -555,19 +537,49 @@ function byline(it) {
 }
 // "pra você" fica fechado: a página respira e quem quer abre
 const pv = (it) => it.pra_voce ? `<details class="pv"><summary>Pra você</summary><p>${esc(it.pra_voce)}</p></details>` : '';
-const titulo = (it) => `<h3 class="titulo"><a href="${esc(it.fonte_url)}" target="_blank" rel="noopener">${esc(it.titulo)}</a></h3>`;
+const titulo = (it) => `<h3 class="titulo">${linkMateria(it)}</h3>`;
 
 function destaque(it) {
   return `<article class="feature" id="m-${esc(it.id)}">
-    ${foto(it, 'ar-wide')}
+    ${foto(it, 'feature')}
     <div>${titulo(it)}${byline(it)}<p class="resumo">${esc(it.resumo)}</p>${pv(it)}<div class="actions">${fonte(it)}${botaoSalvar(it)}</div></div>
   </article>`;
 }
-// comFoto: algum cartão da seção tem foto; aí quem não tem ganha a capa, para a fileira alinhar
-function cartao(it, escondido, comFoto) {
+function cartao(it, escondido) {
   return `<article id="m-${esc(it.id)}"${escondido ? ' hidden' : ''}>
-    ${comFoto ? foto(it, 'ar-card') : ''}${titulo(it)}${byline(it)}<p class="resumo">${esc(it.resumo)}</p>${pv(it)}<div class="actions">${fonte(it)}${botaoSalvar(it)}</div>
+    ${foto(it, 'card')}${titulo(it)}${byline(it)}<p class="resumo">${esc(it.resumo)}</p>${pv(it)}<div class="actions">${fonte(it)}${botaoSalvar(it)}</div>
   </article>`;
+}
+
+function materiaDeCapa(it, rotulo, indice) {
+  return `<article class="lead"${indice ? ' hidden' : ''}>
+    <div class="lead-head">
+      <span class="stamp rotulo">${esc(rotulo)}</span>
+      <h2 class="banner">${linkMateria(it)}</h2>
+      ${byline(it)}
+    </div>
+    ${foto(it, 'lead', indice === 0)}
+    <div class="lead-body">
+      <p class="lead-text">${esc(it.resumo)}</p>
+      ${pv(it)}
+      <div class="actions">${fonte(it)}${botaoSalvar(it, indice === 0)}</div>
+    </div>
+  </article>`;
+}
+
+function capaDaEdicao(materias) {
+  return `<section class="cover rise" aria-label="Destaques da edição">
+    ${materias.length > 1 ? `<div class="cover-nav">
+      <span class="rotulo">Destaques da edição</span>
+      <div class="cover-controls" role="group" aria-label="Navegar pelos destaques">
+        <span class="cover-position" aria-hidden="true">1 / ${materias.length}</span>
+        <span class="sr-only" role="status"></span>
+        <button class="icon-btn cover-arrow" type="button" data-cover="-1" aria-label="Destaque anterior">${ICON_CHEVRON}</button>
+        <button class="icon-btn cover-arrow" type="button" data-cover="1" aria-label="Próximo destaque">${ICON_CHEVRON}</button>
+      </div>
+    </div>` : ''}
+    ${materias.map(({ it, rotulo }, indice) => materiaDeCapa(it, rotulo, indice)).join('')}
+  </section>`;
 }
 
 function anuncio(it, escondido) {
@@ -575,24 +587,30 @@ function anuncio(it, escondido) {
   if (oque) oque = oque[0].toUpperCase() + oque.slice(1);
   const estrelas = it.estrelas || (it.resumo.match(/★\s*(\d(?:[\d.,]*\d)?(?:\s*mil)?)/) || [])[1];
   return `<div class="ad" id="m-${esc(it.id)}"${escondido ? ' hidden' : ''}>
-    <div class="ad-top"><h4><a href="${esc(it.fonte_url)}" target="_blank" rel="noopener">${esc(nome)}</a></h4>${estrelas ? `<span class="stars" title="Estrelas no GitHub">${ICON_STAR}${esc(estrelas)}</span>` : ''}</div>
-    ${it.em_alta ? `<span class="alta">Em alta: ${esc(it.em_alta)}</span>` : ''}
-    ${oque ? `<p class="oque">${esc(oque)}</p>` : ''}
+    <div class="ad-top">
+      <div><h4>${linkMateria(it, nome)}</h4>
+      ${oque ? `<p class="oque">${esc(oque)}</p>` : ''}</div>
+      ${foto(it, 'thumb')}
+    </div>
     <p class="det">${esc(it.resumo.replace(/\s*★\s*[\d.,]+(\s*mil)?\.?/, ''))}</p>
+    ${estrelas || it.em_alta ? `<div class="ad-metrics">
+      ${estrelas ? `<span class="stars" title="Estrelas no GitHub">${ICON_STAR}${esc(estrelas)}</span>` : ''}
+      ${it.em_alta ? `<span>${esc(it.em_alta)}</span>` : ''}
+    </div>` : ''}
     ${pv(it)}
     <div class="actions">${fonte(it)}${botaoSalvar(it)}</div>
   </div>`;
 }
 
 const botaoMais = (chave, n, nome) => n > 0 && !state.abertos.has(chave)
-  ? `<div class="mais"><button data-mais="${chave}" aria-expanded="false">Ver mais ${n} em ${nome}</button></div>` : '';
+  ? `<div class="mais"><button data-mais="${chave}" aria-expanded="false">Ver mais em ${esc(nome)}</button></div>` : '';
 
 function classificados(lista) {
   return GRUPOS.map((g) => {
     const itens = lista.filter((x) => (x.grupo || 'ferramentas') === g.id);
     if (!itens.length) return '';
     const chave = `g-${g.id}`, aberto = state.abertos.has(chave);
-    return `<div class="grupo" data-bloco="${chave}"><h3 class="g rotulo">${g.nome} · ${itens.length}</h3>
+    return `<div class="grupo" data-bloco="${chave}"><h3 class="g rotulo">${g.nome}</h3>
       <div class="ads">${itens.map((it, k) => anuncio(it, !aberto && k >= ADS_VISIVEIS)).join('')}</div>
       ${botaoMais(chave, itens.length - ADS_VISIVEIS, g.nome)}</div>`;
   }).join('');
@@ -608,7 +626,7 @@ function testeDoDia(ed, itens) {
   return `<section class="teste" aria-label="${esc(rotulo)}">
     <div>
       <span class="rotulo">${esc(rotulo)}</span>
-      <h2><a href="${esc(it.fonte_url)}" target="_blank" rel="noopener">${esc(nome)}</a></h2>
+      <h2>${linkMateria(it, nome)}</h2>
       <p class="resumo">${esc(oque || it.resumo)}</p>
       <p class="rotulo tempo">Cerca de 30 minutos</p>
     </div>
@@ -619,50 +637,97 @@ function testeDoDia(ed, itens) {
   </section>`;
 }
 
+function resumoDoPeriodo(itens) {
+  const periodo = PERIODOS[state.periodo];
+  const datas = datasDoPeriodo();
+  // No mês, passe pelo começo, meio e fim do arquivo antes de voltar à ordem recente.
+  const ordem = state.periodo === 'mes'
+    ? [...new Set([datas[0], datas[Math.floor(datas.length / 2)], datas.at(-1), datas.at(-2), ...datas])]
+    : datas;
+  const daEdicao = (data, id) => itens.find((it) => it.edicao === data && it.id === id);
+  const selecao = state.edicoes.get(state.sel)?.destaques_periodo?.[state.periodo];
+  const manchetes = (Array.isArray(selecao) ? selecao : []).map((id) => itens.find((it) => it.id === id)).filter(Boolean).slice(0, 3);
+  for (const data of ordem) {
+    if (manchetes.length === 3) break;
+    const it = daEdicao(data, state.edicoes.get(data)?.manchete);
+    if (it && !manchetes.some((destaque) => destaque.fonte_nome === it.fonte_nome)) manchetes.push(it);
+  }
+  const ideias = ordem.map((data) => itens.find((it) => it.edicao === data && it.cat === 'resultados')).filter(Boolean);
+  const repos = ordem.map((data) => daEdicao(data, state.edicoes.get(data)?.teste_do_dia?.item))
+    .filter((it) => it && /^https:\/\/github\.com\//i.test(it.fonte_url));
+  const escolhas = [
+    ['Boas ideias para aplicar', ideias],
+    ['Repositórios em destaque', repos.length ? repos : itens.filter((it) => it.cat === 'classificados' && /^https:\/\/github\.com\//i.test(it.fonte_url))],
+    ['Negócios', itens.filter((it) => it.cat === 'negocios')],
+  ];
+  const curta = (data) => data.slice(8) + '/' + data.slice(5, 7);
+  const intervalo = datas.length === 1 ? curta(datas[0]) : `${curta(datas.at(-1))} a ${curta(datas[0])}`;
+  return `<section class="panorama" aria-labelledby="panorama-titulo">
+    <header>
+      <span class="rotulo">Últimos ${periodo.diasAnteriores + 1} dias</span>
+      <h2 id="panorama-titulo">${periodo.titulo}</h2>
+      <p>${datas.length === 1 ? 'Uma edição disponível' : `${datas.length} edições disponíveis`} · ${intervalo}</p>
+    </header>
+    ${manchetes.length ? `<section class="periodo-manchetes"><h3>Principais notícias</h3><div class="periodo-capas">
+      ${manchetes.map((it) => `<article class="periodo-capa">${foto(it, 'periodo')}<p class="byline">${curta(it.publicado_em || it.edicao)} · ${esc(it.fonte_nome)}</p><h4>${linkMateria(it)}</h4></article>`).join('')}
+    </div></section>` : ''}
+    <div class="periodo-selecoes">
+      ${escolhas.filter(([, lista]) => lista.length).map(([titulo, lista]) => `<section><h3>${titulo}</h3><ul>
+        ${lista.slice(0, periodo.limite).map((it) => `<li>${linkMateria(it, it.cat === 'classificados' ? it.titulo.split(' — ')[0] : it.titulo)}</li>`).join('')}
+      </ul></section>`).join('')}
+    </div>
+    <a class="src" href="#arquivo-periodo">Ver arquivo por editoria</a>
+  </section>
+  <header class="arquivo-periodo" id="arquivo-periodo"><h2>Arquivo do período</h2></header>`;
+}
+
 function render() {
-  fotoN = 0;
   const ed = state.edicoes.get(state.sel);
-  const meta = state.indice.find((e) => e.data === state.sel);
   const itens = itensDoPeriodo();
-  const lead = ed && ed.itens.find((x) => x.id === ed.manchete);
+  const hoje = state.periodo === '24h';
+  const lead = hoje && itens.find((x) => x.id === ed?.manchete);
   const resto = itens.filter((x) => !lead || x.fonte_url !== lead.fonte_url);
   const daCat = (c) => resto.filter((x) => x.cat === c);
   const secoes = secoesDoPeriodo();
 
-  $('#vol').textContent = `Vol. I · Nº ${meta.numero}`;
   $('#caderno').textContent = ed?.caderno || 'Caderno de Inteligência Artificial';
-  $('#dateline').textContent = dataLonga(state.sel);
+  $('#dateline').textContent = `${hoje ? '' : 'Até '}${dataLonga(state.sel)}`;
   $('#ed-select').value = state.sel;
   document.title = `Diário X · ${state.sel.slice(8)}/${state.sel.slice(5, 7)}`;
-  $('#leitura').textContent = `${resto.length + (lead ? 1 : 0)} matérias`;
-  $('#cats').innerHTML = secoes.map((c) => daCat(c.id).length ? `<a href="#${c.id}">${c.nome}<b>${daCat(c.id).length}</b></a>` : '').join('');
+  $('#cats').innerHTML = secoes.map((c) => daCat(c.id).length ? `<a href="#${esc(c.id)}">${esc(c.nome)}</a>` : '').join('');
 
-  let html = '';
+  let html = !hoje && itens.length ? resumoDoPeriodo(itens) : '';
   if (lead) {
-    const minuto = secoes.filter((c) => c.id !== 'classificados').map((c) => ({ c, x: daCat(c.id)[0] })).filter((m) => m.x);
-    const nAds = daCat('classificados').length;
-    html += `<section class="front">
-      <span class="stamp rise" style="--i:0">Manchete</span>
-      <h2 class="banner rise" style="--i:1"><a href="${esc(lead.fonte_url)}" target="_blank" rel="noopener">${esc(lead.titulo)}</a></h2>
-      <div class="rise" style="--i:2">${byline(lead)}</div>
-      <div class="front-grid">
-        <div class="rise" style="--i:3">
-          ${foto(lead, 'ar-photo moldura')}
-          <p class="lead-text">${esc(lead.resumo)}</p>
-          ${pv(lead)}
-          <div class="actions">${fonte(lead)}${botaoSalvar({ ...lead, edicao: state.sel }, true)}</div>
-        </div>
-        <aside class="minuto rise" style="--i:4">
-          <h2 class="rotulo">O dia em 1 minuto</h2>
+    const editorias = secoes.filter((c) => c.id !== 'classificados');
+    const imagensDaCapa = new Set([lead.imagem]);
+    const capa = [{ it: lead, rotulo: 'Manchete' }];
+    const catLead = CAT_DE(lead);
+    const ordemDaCapa = [...editorias.filter((c) => c.id !== catLead), ...editorias.filter((c) => c.id === catLead)];
+    for (const c of ordemDaCapa) {
+      if (capa.length === 4) break;
+      const it = daCat(c.id).find((x) => x.edicao === state.sel && x.imagem && !imagensDaCapa.has(x.imagem));
+      if (!it) continue;
+      imagensDaCapa.add(it.imagem);
+      capa.push({ it, rotulo: c.nome });
+    }
+    const urlsDaCapa = new Set(capa.map(({ it }) => it.fonte_url));
+    const minuto = editorias.map((c) => {
+      const lista = daCat(c.id);
+      return { c, x: lista.find((it) => !urlsDaCapa.has(it.fonte_url)) || lista[0] };
+    }).filter((m) => m.x);
+    const temClassificados = daCat('classificados').length > 0;
+    html += `<section class="front" aria-label="Primeira página">
+      ${capaDaEdicao(capa)}
+      ${minuto.length || temClassificados ? `<aside class="minuto rise" style="--i:1">
+          <h2>O dia em 1 minuto</h2>
           <ol>
-            ${minuto.map(({ x, c }) => `<li><a href="#m-${esc(x.id)}"><span class="k rotulo">${c.nome}</span><span class="t">${esc(x.titulo)}</span></a></li>`).join('')}
-            ${nAds ? `<li><a href="#classificados"><span class="k rotulo">Classificados</span><span class="t">${nAds} repositórios em alta, separados por tipo</span></a></li>` : ''}
+            ${minuto.map(({ x, c }) => `<li><a href="#m-${esc(x.id)}"><span class="chamada"><span class="k rotulo">${esc(c.nome)}</span><span class="t">${esc(x.titulo)}</span></span>${foto(x, 'thumb')}</a></li>`).join('')}
+            ${temClassificados ? `<li><a href="#classificados"><span class="chamada"><span class="k rotulo">Classificados</span><span class="t">Ferramentas, agentes e skills para explorar</span></span></a></li>` : ''}
           </ol>
-        </aside>
-      </div>
+        </aside>` : ''}
     </section>
-    <section class="editorial"><span class="rotulo">Palavra do editor</span><p>${esc(ed.editorial)}</p></section>
-    ${state.periodo === '24h' ? testeDoDia(ed, itens) : ''}`;
+    <section class="editorial"><h2>Palavra do editor</h2><p>${esc(ed.editorial)}</p></section>
+    ${testeDoDia(ed, itens)}`;
   }
 
   for (const c of secoes) {
@@ -675,11 +740,11 @@ function render() {
       const [primeiro, ...outros] = lista[0].imagem ? lista : [null, ...lista];
       const aberto = state.abertos.has(c.id);
       corpo = (primeiro ? destaque(primeiro) : '')
-        + `<div class="cards">${outros.map((it, k) => cartao(it, !aberto && k >= VISIVEIS, outros.some((x) => x.imagem))).join('')}</div>`
+        + `<div class="cards">${outros.map((it, k) => cartao(it, !aberto && k >= VISIVEIS)).join('')}</div>`
         + botaoMais(c.id, outros.length - VISIVEIS, c.nome);
     }
     html += `<section class="section" id="${c.id}" data-bloco="${c.id}">
-      <div class="sec-head"><h2>${c.nome}</h2><span class="sub">${c.sub}</span><span class="rotulo">${lista.length} ${lista.length === 1 ? 'item' : 'itens'}</span></div>
+      <div class="sec-head"><h2>${esc(c.nome)}</h2>${c.sub ? `<span class="sub">${esc(c.sub)}</span>` : ''}</div>
       ${corpo}
     </section>`;
   }
@@ -691,7 +756,7 @@ function render() {
     </section>`;
   } else html = '<div class="empty">Nada nesta janela ainda.</div>';
   $('#main').innerHTML = html;
-  posThumb();
+  medirBarra();
 }
 
 /* abas com setas do teclado */
@@ -704,11 +769,6 @@ function marcarAba() {
 function escolherAba(b) {
   state.periodo = b.dataset.p; store('dx-aba', state.periodo);
   state.abertos.clear(); marcarAba(); render();
-}
-// as três abas têm a mesma largura (1fr): a pílula ocupa um terço e anda de terço em terço
-function posThumb() {
-  const i = ['24h', 'semana', 'mes'].indexOf(state.periodo);
-  $('#thumb').style.transform = `translateX(${i * 100}%)`;
 }
 function medirBarra() { document.documentElement.style.setProperty('--bar-h', $('#bar').offsetHeight + 'px'); }
 $('#seg').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) escolherAba(b); });
@@ -735,6 +795,19 @@ function markdown(it) {
 }
 
 $('#main').addEventListener('click', async (e) => {
+  const seta = e.target.closest('[data-cover]');
+  if (seta) {
+    const capa = seta.closest('.cover');
+    const materias = [...capa.querySelectorAll('.lead')];
+    const atual = materias.findIndex((it) => !it.hidden);
+    const proxima = (atual + Number(seta.dataset.cover) + materias.length) % materias.length;
+    materias[atual].hidden = true;
+    materias[proxima].hidden = false;
+    capa.querySelector('.cover-position').textContent = `${proxima + 1} / ${materias.length}`;
+    const titulo = materias[proxima].querySelector('.banner').textContent;
+    capa.querySelector('[role="status"]').textContent = `Destaque ${proxima + 1} de ${materias.length}. ${titulo}`;
+    return;
+  }
   // "ver mais": abre os itens recolhidos do bloco, sem redesenhar a página
   const m = e.target.closest('[data-mais]');
   if (m) {

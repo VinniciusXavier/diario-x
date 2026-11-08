@@ -1,0 +1,55 @@
+/* Papel claro, tinta e o vermelho do Diário X. */
+  :root {
+    --desk: #fffefa;
+    --paper: #fffefa;
+    --paper-2: #f4f1eb;
+    --ink: #191817;
+    --ink-2: #403c37;
+    --ink-3: #625d55;
+    --rule: #19181735;
+    --rule-strong: #191817;
+    --accent-text: #a61f17;
+    --accent-solid: #b8241b;
+    --on-accent: #fff8ec;
+    --ok: #2d6b44;
+    --ease: cubic-bezier(.23, 1, .32, 1);
+
+    /* três vozes: logotipo, serifa editorial, sem serifa da marca */
+    --logo: "UnifrakturMaguntia", "Old English Text MT", serif;
+    --serif: "Source Serif 4", Georgia, serif;
+    --sans: "Manrope", system-ui, sans-serif;
+
+    /* escala por papel */
+    --t-manchete: clamp(2rem, 3vw, 3.25rem);
+    --t-secao: 1.75rem;
+    --t-titulo: 1.3125rem;
+    --t-texto: 1.0625rem;
+    --t-nota: .875rem;
+    --t-rotulo: .75rem;
+
+    --bar-h: 64px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --desk: #0d0b09; --paper: #1d1913; --paper-2: #28221a; --ink: #ecdfc3; --ink-2: #cbbd9e; --ink-3: #ab9e83;
+      --rule: #ecdfc32b; --rule-strong: #ecdfc3; --accent-text: #ff7a68; --accent-solid: #c9322a; --ok: #7fc79a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --desk: #0d0b09; --paper: #1d1913; --paper-2: #28221a; --ink: #ecdfc3; --ink-2: #cbbd9e; --ink-3: #ab9e83;
+    --rule: #ecdfc32b; --rule-strong: #ecdfc3; --accent-text: #ff7a68; --accent-solid: #c9322a; --ok: #7fc79a;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scrollbar-color: var(--ink-3) var(--desk); accent-color: var(--accent-solid); }
+  body { margin: 0; background: var(--desk); color: var(--ink); font: 400 var(--t-texto)/1.6 var(--serif); font-optical-sizing: auto; -webkit-font-smoothing: antialiased; caret-color: var(--accent-solid); }
+  ::selection { background: var(--accent-solid); color: var(--on-accent); }
+  a { color: inherit; text-underline-offset: .18em; text-decoration-thickness: 1px; }
+  button { -webkit-tap-highlight-color: transparent; font: inherit; }
+  button:active { transform: scale(.97); }
+  :focus-visible { outline: 3px solid var(--accent-solid); outline-offset: 2px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
