@@ -114,7 +114,7 @@
 
     try {
       if (!dataValida || !id) throw new Error('Endereço incompleto');
-      const resposta = await fetch(`edicoes/${data}.json`);
+      const resposta = await fetch(`edicoes/${data}.json?t=${Math.floor(Date.now() / 60000)}`);
       if (!resposta.ok) throw new Error('Edição indisponível');
       const edicao = await resposta.json();
       const it = edicao.itens.find((item) => item.id === id);
