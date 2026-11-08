@@ -38,7 +38,8 @@
   figure { margin: 0 0 1.75rem; }
   figure img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--paper-2); border-radius: 4px; }
   .sem-foto { aspect-ratio: 16 / 9; margin-bottom: 1.75rem; display: grid; place-items: center; align-content: center; gap: .4rem; border-radius: 4px; background: var(--paper-2); color: var(--ink-3); }
-  .sem-foto b { font: 400 clamp(2.4rem, 6vw, 4.5rem)/1 var(--logo); color: var(--ink); }
+  .sem-foto { padding: clamp(1.25rem, 4vw, 3rem); text-align: center; border: 1px solid var(--rule); }
+  .sem-foto b { font: 700 clamp(1.5rem, 3.4vw, 2.6rem)/1.12 var(--serif); letter-spacing: -.02em; color: var(--ink); text-wrap: balance; max-width: 30ch; }
   figcaption { margin-top: .35rem; color: var(--ink-3); font: 600 var(--t-rotulo)/1.4 var(--sans); }
   .texto { column-count: 2; column-gap: clamp(1.5rem, 3vw, 3rem); }
   .texto section { break-inside: avoid-column; margin: 0 0 1.4rem; }
@@ -104,7 +105,7 @@
 
     const imagemOk = (it) => externa(it.imagem) || /^assets\/edicoes\/\d{4}-\d{2}-\d{2}\/[a-z0-9-]+\.png$/.test(it.imagem || '');
     function foto(it) {
-      if (!imagemOk(it)) return `<div class="sem-foto" role="img" aria-label="Sem imagem"><b>Diário X</b><span class="rotulo">${esc(nomes[it.categoria] || 'Redação')}</span></div>`;
+      if (!imagemOk(it)) return `<div class="sem-foto" role="img" aria-label="Capa"><span class="rotulo">${esc(nomes[it.categoria] || 'Redação')}${it.idioma && it.idioma !== 'pt' ? ' · traduzido' : ''}</span><b>${esc(it.reportagem?.titulo || it.titulo)}</b><span class="rotulo">Diário X</span></div>`;
       const foco = Number.isFinite(it.imagem_foco_vertical)
         ? ` style="object-position: 50% ${Math.max(0, Math.min(100, it.imagem_foco_vertical))}%"` : '';
       return `<figure><img src="${esc(it.imagem)}" alt=""${foco} fetchpriority="high" decoding="async" referrerpolicy="no-referrer">
