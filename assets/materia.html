@@ -11,33 +11,79 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;1,8..60,400&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/jornal.css">
 <style>
-  .topo { border-bottom: 1px solid var(--rule); }
-  .topo nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; max-width: 76rem; margin: auto; padding: .75rem clamp(1rem, 5vw, 3rem); }
-  .marca { font: 400 clamp(1.6rem, 4vw, 2.35rem)/1 var(--logo); text-decoration: none; }
-  .voltar, .meta { font: 700 var(--t-rotulo)/1.5 var(--sans); }
-  .leitura { max-width: 51rem; margin: auto; padding: clamp(2rem, 7vw, 5rem) clamp(1rem, 5vw, 3rem); overflow-wrap: anywhere; }
-  .meta { display: flex; flex-wrap: wrap; gap: .4rem 1rem; color: var(--ink-3); }
+  .sheet { --gutter: clamp(1rem, 3vw, 2.5rem); min-height: 100vh; max-width: 1300px; margin: 0 auto; padding: 0 var(--gutter) 2.5rem; background: var(--paper); }
+  .rotulo { font: 700 var(--t-rotulo)/1.3 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+
+  /* Cabeçalho igual ao da capa */
+  .strip { text-align: center; padding: .9rem 0 .25rem; }
+  .title { text-align: center; padding: .5rem 0 .7rem; }
+  .title h1 { margin: 0; font: 400 clamp(3rem, 6.6vw, 5.5rem)/.95 var(--logo); }
+  .title h1 a { text-decoration: none; }
+  .title h1 .x { color: var(--accent-text); }
+  .title .motto { margin-top: .45rem; font: italic 400 var(--t-nota)/1.4 var(--serif); color: var(--ink-2); }
+  .dateline { text-align: center; border-bottom: 1px solid var(--rule); padding: .35rem 0 .6rem; }
+  .bar { position: sticky; top: 0; z-index: 20; padding: .3rem 0; background: var(--paper); border-bottom: 3px double var(--rule-strong); }
+  .bar-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .bar a { text-decoration: none; padding: .6rem .5rem; font: 700 var(--t-rotulo)/1 var(--sans); color: var(--ink-2); }
+  .bar a:hover { background: var(--paper-2); color: var(--ink); }
+  .bar .secao { color: var(--accent-text); }
+
+  /* Matéria ocupando a largura toda: texto à esquerda, edição à direita */
+  .leitura { padding-top: clamp(1.25rem, 3vw, 2.25rem); overflow-wrap: anywhere; }
+  .grade { display: grid; grid-template-columns: minmax(0, 1fr) 19rem; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
+  .meta { display: flex; flex-wrap: wrap; gap: .4rem 1rem; font: 700 var(--t-rotulo)/1.5 var(--sans); color: var(--ink-3); }
   .tipo { color: var(--accent-text); text-transform: uppercase; letter-spacing: .08em; }
-  h1 { margin: .6rem 0 .9rem; font: 700 clamp(2.2rem, 6vw, 4.3rem)/1.05 var(--serif); letter-spacing: -.035em; text-wrap: pretty; }
-  .abertura { margin: 0 0 1.75rem; font: italic 400 clamp(1.13rem, 2.7vw, 1.35rem)/1.48 var(--serif); color: var(--ink-2); }
-  figure { margin: 0 0 2rem; }
+  h1.manchete { margin: .5rem 0 .9rem; font: 700 clamp(2.1rem, 4.6vw, 4rem)/1.05 var(--serif); letter-spacing: -.035em; text-wrap: balance; }
+  .abertura { margin: 0 0 1.5rem; font: italic 400 clamp(1.15rem, 2.2vw, 1.5rem)/1.5 var(--serif); color: var(--ink-2); text-wrap: pretty; }
+  figure { margin: 0 0 1.75rem; }
   figure img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--paper-2); border-radius: 4px; }
+  .sem-foto { aspect-ratio: 16 / 9; margin-bottom: 1.75rem; display: grid; place-items: center; align-content: center; gap: .4rem; border-radius: 4px; background: var(--paper-2); color: var(--ink-3); }
+  .sem-foto b { font: 400 clamp(2.4rem, 6vw, 4.5rem)/1 var(--logo); color: var(--ink); }
   figcaption { margin-top: .35rem; color: var(--ink-3); font: 600 var(--t-rotulo)/1.4 var(--sans); }
-  section { max-width: 68ch; margin-block: 1.5rem; }
-  h2 { margin: 0 0 .35rem; font: 700 var(--t-titulo)/1.2 var(--serif); }
-  section p { margin: 0 0 .8rem; }
-  .fontes { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
-  .fontes ul { margin: .5rem 0 0; padding-left: 1.25rem; }
+  .texto { column-count: 2; column-gap: clamp(1.5rem, 3vw, 3rem); }
+  .texto section { break-inside: avoid-column; margin: 0 0 1.4rem; }
+  .texto h2 { margin: 0 0 .35rem; font: 700 var(--t-titulo)/1.2 var(--serif); }
+  .texto p { margin: 0 0 .8rem; font-size: 1.125rem; line-height: 1.65; text-wrap: pretty; }
+  .fontes { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+  .fontes h2 { margin: 0 0 .35rem; font: 700 var(--t-titulo)/1.2 var(--serif); }
+  .fontes ul { margin: .4rem 0 0; padding-left: 1.25rem; }
+
+  .lateral { position: sticky; top: 4.5rem; border-left: 1px solid var(--rule); padding-left: clamp(1rem, 2vw, 1.75rem); }
+  .lateral h2 { margin: 0 0 .75rem; font: 700 var(--t-titulo)/1.2 var(--serif); }
+  .lateral ol { list-style: none; margin: 0; padding: 0; }
+  .lateral li { padding: .75rem 0; border-top: 1px solid var(--rule); }
+  .lateral li:first-child { border-top: 0; padding-top: 0; }
+  .lateral a { text-decoration: none; display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: .75rem; align-items: start; }
+  .lateral a:hover b { text-decoration: underline; }
+  .lateral img, .lateral .mini { width: 4.5rem; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 3px; background: var(--paper-2); display: block; }
+  .lateral small { display: block; margin-bottom: .15rem; font: 700 .68rem/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .lateral b { font: 700 .98rem/1.28 var(--serif); }
+
+  @media (max-width: 62rem) {
+    .grade { grid-template-columns: minmax(0, 1fr); }
+    .lateral { position: static; border-left: 0; padding-left: 0; border-top: 3px double var(--rule-strong); padding-top: 1rem; margin-top: 1.5rem; }
+  }
+  @media (max-width: 44rem) { .texto { column-count: 1; } }
 </style>
 </head>
 <body>
-  <header class="topo">
-    <nav aria-label="Diário X">
-      <a class="marca" href="./">Diário X</a>
-      <a class="voltar" id="voltar" href="./">← Voltar à edição</a>
-    </nav>
+<div class="sheet">
+  <header>
+    <div class="strip rotulo"><span>Caderno de Inteligência Artificial</span></div>
+    <div class="title">
+      <h1><a href="./">Diário <span class="x">X</span></a></h1>
+      <div class="motto">O que muda o seu dia, com a fonte na mão.</div>
+    </div>
+    <div class="dateline rotulo"><span id="dateline"></span></div>
   </header>
+  <nav class="bar" aria-label="Diário X">
+    <div class="bar-in">
+      <a id="voltar" href="./">← Voltar à edição</a>
+      <span class="secao rotulo" id="secao"></span>
+    </div>
+  </nav>
   <main class="leitura" id="leitura" aria-busy="true"><p role="status">Abrindo matéria…</p></main>
+</div>
   <script type="module">
     try {
       const tema = localStorage.getItem('dx-theme');
@@ -53,14 +99,16 @@
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
     const externa = (url) => typeof url === 'string' && /^https?:\/\//i.test(url);
     const dataValida = /^\d{4}-\d{2}-\d{2}$/.test(data);
+    const nomes = { inovacoes: 'Inovações', design: 'Design com IA', resultados: 'Resultados', vozes: 'Vozes', pesquisa: 'Pesquisa', negocios: 'Negócios', classificados: 'Classificados' };
     if (dataValida) voltar.href = `index.html?edicao=${data}`;
 
+    const imagemOk = (it) => externa(it.imagem) || /^assets\/edicoes\/\d{4}-\d{2}-\d{2}\/[a-z0-9-]+\.png$/.test(it.imagem || '');
     function foto(it) {
-      if (!externa(it.imagem) && !/^assets\/edicoes\/\d{4}-\d{2}-\d{2}\/[a-z0-9-]+\.png$/.test(it.imagem)) return '';
+      if (!imagemOk(it)) return `<div class="sem-foto" role="img" aria-label="Sem imagem"><b>Diário X</b><span class="rotulo">${esc(nomes[it.categoria] || 'Redação')}</span></div>`;
       const foco = Number.isFinite(it.imagem_foco_vertical)
         ? ` style="object-position: 50% ${Math.max(0, Math.min(100, it.imagem_foco_vertical))}%"` : '';
-      return `<figure><img src="${esc(it.imagem)}" alt=""${foco} decoding="async" referrerpolicy="no-referrer">
-        ${it.legenda_imagem ? `<figcaption>${esc(it.legenda_imagem)}</figcaption>` : ''}</figure>`;
+      return `<figure><img src="${esc(it.imagem)}" alt=""${foco} fetchpriority="high" decoding="async" referrerpolicy="no-referrer">
+        <figcaption>${esc(it.legenda_imagem || `Prévia · ${it.fonte_nome}`)}</figcaption></figure>`;
     }
 
     try {
@@ -74,26 +122,36 @@
       const r = it.reportagem;
       const titulo = r?.titulo || it.titulo;
       const dataLonga = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' }).format(new Date(`${data}T12:00:00`));
+      document.querySelector('#dateline').textContent = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(new Date(`${data}T12:00:00`));
+      document.querySelector('#secao').textContent = nomes[it.categoria] || '';
       const fontes = [{ nome: it.fonte_nome, url: it.fonte_url }, ...(r?.fontes || [])].filter(({ url }) => externa(url));
+      const outras = edicao.itens.filter((x) => x.id !== id).sort((a, b) => Number(Boolean(b.reportagem)) - Number(Boolean(a.reportagem))).slice(0, 6);
       document.title = `${titulo} · Diário X`;
-      leitura.innerHTML = `<article>
+      leitura.innerHTML = `<div class="grade"><article>
         <header>
-          <div class="meta"><span class="tipo">${r ? 'Redação Diário X' : 'Arquivo do Diário X'}</span><time datetime="${data}">${dataLonga}</time></div>
-          <h1>${esc(titulo)}</h1>
+          <div class="meta"><span class="tipo">${r ? 'Redação Diário X' : 'Arquivo do Diário X'}</span><time datetime="${data}">${dataLonga}</time><span>Fonte: ${esc(it.fonte_nome)}</span></div>
+          <h1 class="manchete">${esc(titulo)}</h1>
           <p class="abertura">${esc(r?.abertura || it.resumo)}</p>
         </header>
         ${foto(it)}
+        <div class="texto">
         ${(r?.blocos || []).map((bloco) => `<section><h2>${esc(bloco.titulo)}</h2>
           ${bloco.paragrafos.map((p) => `<p>${esc(p)}</p>`).join('')}</section>`).join('')}
         ${it.pra_voce ? `<section><h2>Pra você</h2><p>${esc(it.pra_voce)}</p></section>` : ''}
-        <section class="fontes"><h2>${fontes.length > 1 ? 'Fontes' : 'Fonte'}</h2>
+        </div>
+        <section class="fontes"><h2>${fontes.length > 1 ? 'Fontes' : 'Fonte original'}</h2>
           <ul>${fontes.map(({ nome, url }) => `<li><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(nome)}</a></li>`).join('')}</ul>
         </section>
-      </article>`;
-      const imagem = leitura.querySelector('img');
-      imagem?.addEventListener('error', () => imagem.closest('figure').remove());
+      </article>
+      <aside class="lateral" aria-label="Mais da edição"><h2>Mais desta edição</h2><ol>
+        ${outras.map((x) => `<li><a href="assets/materia.html?edicao=${data}&id=${encodeURIComponent(x.id)}">
+          ${imagemOk(x) ? `<img src="${esc(x.imagem)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML='<span class=mini></span>'">` : '<span class="mini"></span>'}
+          <span><small>${esc(nomes[x.categoria] || '')}</small><b>${esc(x.titulo)}</b></span></a></li>`).join('')}
+      </ol></aside></div>`;
+      const imagem = leitura.querySelector('figure img');
+      imagem?.addEventListener('error', () => { imagem.closest('figure').outerHTML = foto({ ...it, imagem: '' }); });
     } catch {
-      leitura.innerHTML = '<h1>Matéria indisponível</h1><p>Confira o endereço ou volte à edição para escolher outra matéria.</p>';
+      leitura.innerHTML = '<h1 class="manchete">Matéria indisponível</h1><p>Confira o endereço ou volte à edição para escolher outra matéria.</p>';
     } finally {
       leitura.removeAttribute('aria-busy');
     }
